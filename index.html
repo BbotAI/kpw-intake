@@ -288,6 +288,67 @@
       font-weight: 700;
     }
 
+    /* ── CTA radio options ───────────────────────────────────── */
+    .radio-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    @media (max-width: 560px) { .radio-group { grid-template-columns: 1fr; } }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(4, 8, 20, 0.75);
+      border: 1px solid rgba(50, 70, 110, 0.85);
+      border-radius: 6px;
+      color: #9ca3af;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-option:hover { border-color: rgba(230, 126, 34, 0.5); color: #e2e8f0; }
+    .radio-option.selected {
+      background: rgba(230, 126, 34, 0.15);
+      border-color: var(--orange);
+      color: #fff;
+      font-weight: 700;
+    }
+    .radio-dot {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(50, 70, 110, 0.85);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .radio-option.selected .radio-dot { border-color: var(--orange); background: var(--orange); }
+    .radio-option.selected .radio-dot::after {
+      content: '';
+      width: 6px; height: 6px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .cta-custom-wrap { display: none; margin-top: 10px; }
+    .cta-custom-wrap.visible { display: block; }
+
+    /* ── Info card ───────────────────────────────────────────── */
+    .info-card {
+      background: rgba(230, 126, 34, 0.08);
+      border: 1px solid rgba(230, 126, 34, 0.25);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
     /* ── Field validation ────────────────────────────────────── */
     .field-error input,
     .field-error textarea,
@@ -412,32 +473,31 @@
           <span class="val-msg">Phone number is required</span>
         </div>
 
-        <div class="field">
-          <label>Website / Domain
-            <span class="hint">e.g. yourbusiness.com</span>
+        <div class="field col-span-2" id="wrap-cta">
+          <label>How Do You Want Customers to Reach You?
+            <span class="hint">We'll use this at the end of every post and page we create</span>
           </label>
-          <input type="url" name="domain" placeholder="https://yourbusiness.com">
-        </div>
-
-        <div class="field">
-          <label>Blog URL
-            <span class="hint">Blogger URL where posts will publish</span>
-          </label>
-          <input type="url" name="blogUrl" placeholder="https://yourbusiness.blogspot.com">
-        </div>
-
-        <div class="field">
-          <label>Blogger Blog ID
-            <span class="hint">Found in Blogger settings or dashboard URL</span>
-          </label>
-          <input type="text" name="blogId" placeholder="Found in Blogger Settings or dashboard URL">
-        </div>
-
-        <div class="field">
-          <label>CTA Text
-            <span class="hint">Action phrase used to close every post</span>
-          </label>
-          <input type="text" name="cta" placeholder="Call for a free quote">
+          <div class="radio-group" id="cta-radio-group">
+            <div class="radio-option" onclick="selectCta(this,'Call for a free quote')">
+              <span class="radio-dot"></span>Call for a free quote
+            </div>
+            <div class="radio-option" onclick="selectCta(this,'Request a free estimate')">
+              <span class="radio-dot"></span>Request a free estimate
+            </div>
+            <div class="radio-option" onclick="selectCta(this,'Text us anytime')">
+              <span class="radio-dot"></span>Text us anytime
+            </div>
+            <div class="radio-option" onclick="selectCta(this,'Schedule a free visit')">
+              <span class="radio-dot"></span>Schedule a free visit
+            </div>
+            <div class="radio-option" id="cta-custom-option" onclick="toggleCtaCustom(this)" style="grid-column: 1 / -1;">
+              <span class="radio-dot"></span>Something else?
+            </div>
+          </div>
+          <div class="cta-custom-wrap" id="cta-custom-wrap">
+            <input type="text" name="ctaCustom" id="ctaCustom" placeholder="Type your own CTA phrase...">
+          </div>
+          <input type="hidden" name="cta" id="cta-hidden">
         </div>
 
         <div class="field col-span-2">
@@ -447,18 +507,8 @@
           <input type="text" name="tagline" placeholder="What makes your business different in one sentence">
         </div>
 
-        <div class="field">
-          <label>Logo URL
-            <span class="hint">Direct link to logo image (optional)</span>
-          </label>
-          <input type="url" name="logoUrl" placeholder="https://...">
-        </div>
-
-        <div class="field">
-          <label>Footer Image URL
-            <span class="hint">Banner image added to every blog post</span>
-          </label>
-          <input type="url" name="footerImageUrl" placeholder="https://...">
+        <div class="col-span-2 info-card">
+          &#128248; Logo and photos are uploaded in your Client Portal — you'll receive that link after this form. We handle all the rest.
         </div>
 
         <div class="field" id="wrap-email">
@@ -485,6 +535,39 @@
             <button type="button" class="toggle-btn" data-value="No" onclick="setToggle(this,'emergency-toggle','emergencyAfterHours')">No</button>
           </div>
           <input type="hidden" name="emergencyAfterHours" id="emergencyAfterHours">
+        </div>
+
+        <div class="field col-span-2">
+          <label>Do You Already Have a Blog or Website?</label>
+          <div class="toggle-group" id="blog-toggle">
+            <button type="button" class="toggle-btn" data-value="Yes" onclick="setBlogToggle(this,'Yes')">Yes</button>
+            <button type="button" class="toggle-btn" data-value="No" onclick="setBlogToggle(this,'No')">No</button>
+            <button type="button" class="toggle-btn" data-value="Not Sure" onclick="setBlogToggle(this,'Not Sure')">Not Sure</button>
+          </div>
+          <input type="hidden" name="hasBlog" id="hasBlog">
+        </div>
+
+        <div id="blog-urls" class="col-span-2" style="display:none;">
+          <div class="grid-2">
+            <div class="field">
+              <label>Existing Website URL
+                <span class="hint">Their current website</span>
+              </label>
+              <input type="url" name="domain" placeholder="https://yourbusiness.com">
+            </div>
+            <div class="field">
+              <label>Existing Blog URL
+                <span class="hint">Blogspot or other blog address</span>
+              </label>
+              <input type="url" name="blogUrl" placeholder="https://yourbusiness.blogspot.com">
+            </div>
+          </div>
+        </div>
+
+        <div id="blog-no-note" class="col-span-2" style="display:none;">
+          <div class="info-card" style="color:#94a3b8; font-style:italic;">
+            No problem — we handle setup for you. Everything gets added to your file automatically.
+          </div>
         </div>
 
       </div>
@@ -1003,6 +1086,48 @@ function setToggle(btn, groupId, inputId) {
   document.getElementById(inputId).value = btn.getAttribute('data-value');
 }
 
+/* ── Blog/website toggle ─────────────────────────────────────── */
+function setBlogToggle(btn, value) {
+  document.querySelectorAll('#blog-toggle .toggle-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  document.getElementById('hasBlog').value = value;
+  var urls = document.getElementById('blog-urls');
+  var note = document.getElementById('blog-no-note');
+  if (value === 'Yes') {
+    urls.style.display = 'block';
+    note.style.display = 'none';
+  } else {
+    urls.style.display = 'none';
+    note.style.display = 'block';
+  }
+}
+
+/* ── CTA radio selection ─────────────────────────────────────── */
+function selectCta(el, value) {
+  document.querySelectorAll('#cta-radio-group .radio-option').forEach(function(o) {
+    o.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  document.getElementById('cta-hidden').value = value;
+  document.getElementById('cta-custom-wrap').classList.remove('visible');
+}
+
+function toggleCtaCustom(el) {
+  var wrap = document.getElementById('cta-custom-wrap');
+  var opening = !wrap.classList.contains('visible');
+  document.querySelectorAll('#cta-radio-group .radio-option').forEach(function(o) {
+    o.classList.remove('selected');
+  });
+  if (opening) {
+    el.classList.add('selected');
+    wrap.classList.add('visible');
+    document.getElementById('cta-hidden').value = '';
+    document.getElementById('ctaCustom').focus();
+  }
+}
+
 /* ── Validation helpers ──────────────────────────────────────── */
 function clearValidation() {
   document.querySelectorAll('.field-error, .field-warn').forEach(function(f) {
@@ -1070,20 +1195,24 @@ function handleSubmit(e) {
   if (!customerWords)  { markField('wrap-customerWords',  'warn'); hasWarnings = true; }
   if (!featuredService){ markField('wrap-featuredService','warn'); hasWarnings = true; }
 
+  /* Resolve CTA from radio or custom input */
+  var ctaVal = document.getElementById('cta-hidden').value;
+  if (document.getElementById('cta-custom-wrap').classList.contains('visible')) {
+    ctaVal = form.ctaCustom ? form.ctaCustom.value.trim() : ctaVal;
+  }
+
   var payload = {
     clientName:          clientName,
     businessType:        businessType,
-    domain:              form.domain.value.trim(),
-    blogUrl:             form.blogUrl.value.trim(),
-    blogId:              form.blogId.value.trim(),
+    hasBlog:             form.hasBlog ? form.hasBlog.value : '',
+    domain:              form.domain ? form.domain.value.trim() : '',
+    blogUrl:             form.blogUrl ? form.blogUrl.value.trim() : '',
     phone:               phone,
     email:               email,
     hours:               hours,
     emergencyAfterHours: form.emergencyAfterHours.value,
-    cta:                 form.cta.value.trim(),
+    cta:                 ctaVal,
     tagline:             form.tagline.value.trim(),
-    logoUrl:             form.logoUrl.value.trim(),
-    footerImageUrl:      form.footerImageUrl.value.trim(),
     services:            services,
     featuredService:     featuredService,
     serviceAreas:        serviceAreas,
@@ -1149,6 +1278,14 @@ function resetForm() {
   clearValidation();
   document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('emergencyAfterHours').value = '';
+  /* Reset CTA radio */
+  document.querySelectorAll('#cta-radio-group .radio-option').forEach(function(o) { o.classList.remove('selected'); });
+  document.getElementById('cta-hidden').value = '';
+  document.getElementById('cta-custom-wrap').classList.remove('visible');
+  /* Reset blog toggle */
+  document.getElementById('hasBlog').value = '';
+  document.getElementById('blog-urls').style.display   = 'none';
+  document.getElementById('blog-no-note').style.display = 'none';
   var st = document.getElementById('status');
   st.className = ''; st.style.display = 'none';
   document.getElementById('success-screen').style.display = 'none';
