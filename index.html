@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KPW Client Intake</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange:  #E67E22;
+      --orange2: #ca6f1e;
+      --bg:      #0f172a;
+      --card:    #1e293b;
+      --border:  #334155;
+      --text:    #e2e8f0;
+      --muted:   #94a3b8;
+      --dim:     #64748b;
+      --green:   #16a34a;
+      --red:     #dc2626;
+    }
+
+    body {
+      font-family: 'Google Sans', -apple-system, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .site-header {
+      background: var(--card);
+      border-bottom: 3px solid var(--orange);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      width: 44px; height: 44px;
+      background: var(--orange);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 13px; color: #fff;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+    .site-header h1 { font-size: 18px; font-weight: 700; color: #fff; line-height: 1; }
+    .site-header p  { font-size: 12px; color: var(--dim); margin-top: 3px; }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 20px;
+    }
+
+    /* ── Section cards ──────────────────────────────────────── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-num {
+      width: 26px; height: 26px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+    .section-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .section-desc  { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+    /* ── Field grid ─────────────────────────────────────────── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .grid-1 { display: grid; gap: 14px; }
+    .col-span-2 { grid-column: 1 / -1; }
+
+    @media (max-width: 560px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .col-span-2 { grid-column: 1; }
+    }
+
+    /* ── Labels and inputs ──────────────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    label .req { color: var(--orange); margin-left: 2px; }
+    label .hint {
+      font-size: 10px;
+      color: var(--dim);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      display: block;
+      margin-top: 1px;
+    }
+
+    input[type=text],
+    input[type=url],
+    input[type=tel],
+    input[type=email],
+    textarea,
+    select {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+    ::placeholder { color: var(--dim); }
+    textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+    /* ── Submit area ────────────────────────────────────────── */
+    .submit-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .btn-submit {
+      width: 100%;
+      max-width: 360px;
+      padding: 14px 24px;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: background 0.15s;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--orange2); }
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Status messages ────────────────────────────────────── */
+    #status {
+      width: 100%;
+      max-width: 360px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+    #status.loading { background: #1a2540; color: var(--orange);  border: 1px solid #2a3a5a; display: block; }
+    #status.success { background: #14432a; color: #4ade80;        border: 1px solid #16a34a; display: block; }
+    #status.error   { background: #4a1515; color: #fca5a5;        border: 1px solid var(--red); display: block; }
+
+    /* ── Success screen ─────────────────────────────────────── */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+    }
+    #success-screen .check {
+      width: 64px; height: 64px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+    }
+    #success-screen h2 { font-size: 22px; color: #fff; margin-bottom: 10px; }
+    #success-screen p  { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 380px; margin: 0 auto 24px; }
+    .btn-another {
+      padding: 11px 24px;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-another:hover { border-color: var(--orange); color: var(--orange); }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">KPW</div>
+  <div>
+    <h1>Client Intake Form</h1>
+    <p>Kansas Prairie Webworks — fills directly into Agency Brain</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Success screen (hidden until submit) -->
+  <div id="success-screen">
+    <div class="check">&#10003;</div>
+    <h2>Client Added!</h2>
+    <p id="success-msg">The client has been saved to the Agency Brain spreadsheet. Services are ready for research.</p>
+    <button class="btn-another" onclick="resetForm()">Add Another Client</button>
+  </div>
+
+  <form id="intake-form" onsubmit="handleSubmit(event)" novalidate>
+
+    <!-- ── 1. Business Info ──────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <div>
+          <div class="section-title">Business Info</div>
+          <div class="section-desc">Core details used in every piece of content</div>
+        </div>
+      </div>
+      <div class="grid-2">
+
+        <div class="field col-span-2">
+          <label>Client / Business Name <span class="req">*</span></label>
+          <input type="text" name="clientName" placeholder="Mike's Services LLC" required>
+        </div>
+
+        <div class="field">
+          <label>Business Type <span class="req">*</span>
+            <span class="hint">What they do in plain English</span>
+          </label>
+          <input type="text" name="businessType" placeholder="Septic &amp; Excavation Contractor" required>
+        </div>
+
+        <div class="field">
+          <label>Phone Number
+            <span class="hint">Used in every CTA and tel: links</span>
+          </label>
+          <input type="tel" name="phone" placeholder="785-488-7925">
+        </div>
+
+        <div class="field">
+          <label>Website / Domain
+            <span class="hint">e.g. mikeservicesllc.com</span>
+          </label>
+          <input type="url" name="domain" placeholder="https://mikeservicesllc.com">
+        </div>
+
+        <div class="field">
+          <label>Blog URL
+            <span class="hint">Blogger URL where posts will publish</span>
+          </label>
+          <input type="url" name="blogUrl" placeholder="https://mikeservicesllc.blogspot.com">
+        </div>
+
+        <div class="field">
+          <label>Blogger Blog ID
+            <span class="hint">Found in Blogger settings or dashboard URL</span>
+          </label>
+          <input type="text" name="blogId" placeholder="5880855544549043087">
+        </div>
+
+        <div class="field">
+          <label>CTA Text
+            <span class="hint">Action phrase used to close every post</span>
+          </label>
+          <input type="text" name="cta" placeholder="Request a free estimate">
+        </div>
+
+        <div class="field col-span-2">
+          <label>Tagline
+            <span class="hint">Short positioning statement — one sentence max</span>
+          </label>
+          <input type="text" name="tagline" placeholder="Central Kansas septic and excavation done right.">
+        </div>
+
+        <div class="field">
+          <label>Logo URL
+            <span class="hint">Direct link to logo image (optional)</span>
+          </label>
+          <input type="url" name="logoUrl" placeholder="https://...">
+        </div>
+
+        <div class="field">
+          <label>Footer Image URL
+            <span class="hint">Banner image added to every blog post</span>
+          </label>
+          <input type="url" name="footerImageUrl" placeholder="https://...">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 2. Services ───────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <div>
+          <div class="section-title">Services</div>
+          <div class="section-desc">Each service gets its own research and content pipeline</div>
+        </div>
+      </div>
+      <div class="grid-1">
+
+        <div class="field">
+          <label>Services Offered <span class="req">*</span>
+            <span class="hint">Comma-separated — each becomes a row in the Services tab</span>
+          </label>
+          <textarea name="services" placeholder="Septic Installation, Septic Repair, Excavation, Land Clearing, Demolition" required></textarea>
+        </div>
+
+        <div class="field">
+          <label>Featured / Primary Service
+            <span class="hint">The one service that drives most revenue — gets a 1.25x priority boost</span>
+          </label>
+          <input type="text" name="featuredService" placeholder="Septic Installation">
+        </div>
+
+        <div class="field">
+          <label>Service Area
+            <span class="hint">Counties or cities served — used in geo-targeted content</span>
+          </label>
+          <input type="text" name="serviceAreas" placeholder="Saline, Ottawa, Lincoln, Dickinson, Ellsworth, Cloud Counties">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 3. Voice & Story ──────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <div>
+          <div class="section-title">Voice &amp; Story</div>
+          <div class="section-desc">This is what makes content sound like them — not a generic contractor</div>
+        </div>
+      </div>
+      <div class="grid-1">
+
+        <div class="field">
+          <label>Words Customers Use When They Call
+            <span class="hint">Exact phrases — "my tank is backing up", "I need a hole dug", etc.</span>
+          </label>
+          <textarea name="customerWords" placeholder="My tank is backing up, I need a new septic, the drain field isn't working..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>What Sets This Business Apart
+            <span class="hint">Real differentiators — not marketing speak. What do repeat customers say?</span>
+          </label>
+          <textarea name="whatSetsApart" placeholder="We answer our phone on weekends, we've been doing this for 20 years in this county..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Best Customer Review
+            <span class="hint">Paste a real review — language and sentiment gets woven into content naturally</span>
+          </label>
+          <textarea name="bestReview" placeholder="&quot;Mike showed up the same day we called and had our septic fixed before dinner...&quot;"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Recent Job They're Proud Of
+            <span class="hint">Specific job — property type, county, what made it memorable</span>
+          </label>
+          <textarea name="recentJobPride" placeholder="Full septic install on a 40-acre property in Ottawa County with caliche hardpan — took extra time but came out perfect."></textarea>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Busiest Month</label>
+            <select name="busiestMonth">
+              <option value="">— select —</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+              <option>Spring (Mar-May)</option><option>Summer (Jun-Aug)</option>
+              <option>Fall (Sep-Nov)</option><option>Winter (Dec-Feb)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Slowest Month</label>
+            <select name="slowestMonth">
+              <option value="">— select —</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+              <option>Spring (Mar-May)</option><option>Summer (Jun-Aug)</option>
+              <option>Fall (Sep-Nov)</option><option>Winter (Dec-Feb)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── 4. Top Questions ──────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <div>
+          <div class="section-title">Top Questions Before Hiring</div>
+          <div class="section-desc">What do customers ask before they decide to book? These go into every FAQ section.</div>
+        </div>
+      </div>
+      <div class="grid-1">
+        <div class="field">
+          <label>Question 1</label>
+          <input type="text" name="topQ1" placeholder="How much does a new septic system cost?">
+        </div>
+        <div class="field">
+          <label>Question 2</label>
+          <input type="text" name="topQ2" placeholder="How long does installation take?">
+        </div>
+        <div class="field">
+          <label>Question 3</label>
+          <input type="text" name="topQ3" placeholder="Do I need a permit for septic work in Kansas?">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 5. Other ──────────────────────────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <div>
+          <div class="section-title">Other Details</div>
+          <div class="section-desc">Helps Claude avoid bad fits and write smarter content</div>
+        </div>
+      </div>
+      <div class="grid-1">
+
+        <div class="field">
+          <label>Jobs They Avoid or Turn Down
+            <span class="hint">Helps Claude never accidentally pitch a service they don't want</span>
+          </label>
+          <textarea name="jobsToAvoid" placeholder="Sewer line work inside city limits, anything under $2,000, grease trap cleaning..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Competitor Notes
+            <span class="hint">Who they compete with and what they do better — kept private, used to sharpen angles</span>
+          </label>
+          <textarea name="competitorNotes" placeholder="Main competitor is ABC Septic in Salina — they're slower to respond and don't do land clearing..."></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Submit ────────────────────────────────────────────── -->
+    <div class="submit-area">
+      <div id="status"></div>
+      <button type="submit" class="btn-submit" id="btn-submit">
+        Save Client to Agency Brain
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdXb9RZydc60NF8qHyoGS7NyCgVkc13d9u7HM-bRon3rOpMR-Qbhtf6TofOIDpIwGa/exec';
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    var form   = document.getElementById('intake-form');
+    var btn    = document.getElementById('btn-submit');
+    var status = document.getElementById('status');
+
+    // Basic required field validation
+    var clientName = form.clientName.value.trim();
+    var businessType = form.businessType.value.trim();
+    var services = form.services.value.trim();
+
+    if (!clientName) { flash(status, 'error', 'Client name is required.'); form.clientName.focus(); return; }
+    if (!businessType) { flash(status, 'error', 'Business type is required.'); form.businessType.focus(); return; }
+    if (!services) { flash(status, 'error', 'At least one service is required.'); form.services.focus(); return; }
+
+    // Build payload matching saveClientData_ field names
+    var payload = {
+      clientName:      clientName,
+      businessType:    businessType,
+      domain:          form.domain.value.trim(),
+      blogUrl:         form.blogUrl.value.trim(),
+      blogId:          form.blogId.value.trim(),
+      phone:           form.phone.value.trim(),
+      cta:             form.cta.value.trim(),
+      tagline:         form.tagline.value.trim(),
+      logoUrl:         form.logoUrl.value.trim(),
+      footerImageUrl:  form.footerImageUrl.value.trim(),
+      services:        services,
+      featuredService: form.featuredService.value.trim(),
+      serviceAreas:    form.serviceAreas.value.trim(),
+      customerWords:   form.customerWords.value.trim(),
+      whatSetsApart:   form.whatSetsApart.value.trim(),
+      bestReview:      form.bestReview.value.trim(),
+      recentJobPride:  form.recentJobPride.value.trim(),
+      busiestMonth:    form.busiestMonth.value,
+      slowestMonth:    form.slowestMonth.value,
+      topQ1:           form.topQ1.value.trim(),
+      topQ2:           form.topQ2.value.trim(),
+      topQ3:           form.topQ3.value.trim(),
+      jobsToAvoid:     form.jobsToAvoid.value.trim(),
+      competitorNotes: form.competitorNotes.value.trim(),
+      active:          'Yes'
+    };
+
+    btn.disabled = true;
+    flash(status, 'loading', 'Saving to Agency Brain…');
+
+    // Apps Script doesn't send CORS headers, so we use no-cors.
+    // The data is posted successfully; we can't read the response body.
+    fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(payload)
+    })
+    .then(function() {
+      var svcList = services.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+      showSuccess(clientName, svcList.length);
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      flash(status, 'error', 'Network error — check your connection and try again.');
+      console.error(err);
+    });
+  }
+
+  function showSuccess(name, svcCount) {
+    document.getElementById('intake-form').style.display = 'none';
+    var screen = document.getElementById('success-screen');
+    document.getElementById('success-msg').textContent =
+      name + ' has been saved to the Agency Brain spreadsheet with ' +
+      svcCount + ' service' + (svcCount === 1 ? '' : 's') +
+      '. Go to the spreadsheet → KPW Brain → Research Selected Service to start generating content.';
+    screen.style.display = 'block';
+  }
+
+  function resetForm() {
+    document.getElementById('intake-form').reset();
+    document.getElementById('btn-submit').disabled = false;
+    document.getElementById('status').className = '';
+    document.getElementById('status').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'none';
+    document.getElementById('intake-form').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function flash(el, cls, msg) {
+    el.className = cls;
+    el.textContent = msg;
+  }
+</script>
+</body>
+</html>
