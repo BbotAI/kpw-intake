@@ -825,7 +825,7 @@ function setSongState(btn, playing) {
 
 function toggleMsg(btn) {
   if (!msgAudio) {
-    msgAudio = new Audio('welcome_message.mp3');
+    msgAudio = new Audio('audio_message.ogg');
     msgAudio.addEventListener('ended', function() {
       msgPlaying = false;
       setMsgState(btn, false);
