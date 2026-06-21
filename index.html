@@ -31,21 +31,21 @@
       display: block;
     }
 
-    /* ── Everything sits above the canvas ─────────────────────── */
     .site-header, .container { position: relative; z-index: 1; }
 
     /* ── Header ──────────────────────────────────────────────── */
     .site-header {
       background: rgba(6, 10, 24, 0.96);
       border-bottom: 3px solid var(--orange);
-      padding: 14px 24px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       position: sticky;
       top: 0;
       z-index: 100;
       backdrop-filter: blur(10px);
+      flex-wrap: wrap;
     }
     .logo {
       width: 44px; height: 44px;
@@ -56,43 +56,55 @@
       letter-spacing: -0.5px;
       flex-shrink: 0;
     }
-    .header-text { flex: 1; }
-    .site-header h1 { font-size: 18px; font-weight: 700; color: #fff; line-height: 1; }
-    .site-header p  { font-size: 12px; color: #9ca3af; margin-top: 3px; }
+    .header-text { flex: 1; min-width: 120px; }
+    .site-header h1 { font-size: 17px; font-weight: 700; color: #fff; line-height: 1; }
+    .site-header p  { font-size: 11px; color: #9ca3af; margin-top: 3px; }
 
-    /* ── Music button ─────────────────────────────────────────── */
-    .music-btn {
+    /* ── Audio buttons ───────────────────────────────────────── */
+    .audio-btns {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .audio-btn {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 9px 16px;
-      background: rgba(230, 126, 34, 0.12);
-      border: 1.5px solid rgba(230, 126, 34, 0.45);
-      border-radius: 24px;
+      gap: 6px;
+      padding: 8px 14px;
+      background: rgba(230, 126, 34, 0.10);
+      border: 1.5px solid rgba(230, 126, 34, 0.4);
+      border-radius: 22px;
       color: #E67E22;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
       font-family: inherit;
-      letter-spacing: 0.2px;
+      white-space: nowrap;
+      letter-spacing: 0.15px;
     }
-    .music-btn:hover {
-      background: rgba(230, 126, 34, 0.24);
-      border-color: #E67E22;
+    .audio-btn:hover {
+      background: rgba(230, 126, 34, 0.22);
+      border-color: var(--orange);
     }
-    .music-btn.playing {
-      background: rgba(230, 126, 34, 0.2);
-      border-color: #E67E22;
+    .audio-btn.active {
+      background: rgba(230, 126, 34, 0.22);
+      border-color: var(--orange);
       color: #fbbf24;
     }
-    .music-icon { font-size: 17px; line-height: 1; }
-    @keyframes pulse-note {
-      0%, 100% { transform: scale(1);   opacity: 1; }
-      50%       { transform: scale(1.2); opacity: 0.7; }
+    .audio-btn .btn-icon { font-style: normal; font-size: 14px; line-height: 1; }
+
+    @keyframes pulse-icon {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.25); }
     }
-    .music-btn.playing .music-icon { animation: pulse-note 1.4s ease-in-out infinite; }
+    .audio-btn.active .btn-icon { animation: pulse-icon 1.5s ease-in-out infinite; }
+
+    @media (max-width: 540px) {
+      .audio-btn .btn-label { display: none; }
+      .audio-btn { padding: 8px 11px; }
+    }
 
     /* ── Layout ──────────────────────────────────────────────── */
     .container {
@@ -130,11 +142,7 @@
     .section-desc  { font-size: 12px; color: #9ca3af; margin-top: 2px; }
 
     /* ── Field grid ───────────────────────────────────────────── */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .grid-1 { display: grid; gap: 14px; }
     .col-span-2 { grid-column: 1 / -1; }
 
@@ -263,13 +271,7 @@
 </head>
 <body>
 
-<!-- Night sky canvas — drawn by JS below -->
 <canvas id="sky"></canvas>
-
-<!-- Background music -->
-<audio id="bgMusic" loop>
-  <source src="Simpler_Than_You_Think.mp3" type="audio/mpeg">
-</audio>
 
 <header class="site-header">
   <div class="logo">KPW</div>
@@ -277,19 +279,24 @@
     <h1>Client Intake Form</h1>
     <p>Kansas Prairie Webworks — fills directly into Agency Brain</p>
   </div>
-  <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Play background music">
-    <span class="music-icon" id="musicIcon">♪</span>
-    <span class="music-label" id="musicLabel">Play Music</span>
-  </button>
+  <div class="audio-btns">
+    <button class="audio-btn" id="songBtn" onclick="toggleSong(this)">
+      <i class="btn-icon">&#9654;</i>
+      <span class="btn-label">Play Music</span>
+    </button>
+    <button class="audio-btn" id="msgBtn" onclick="toggleMsg(this)">
+      <i class="btn-icon">&#127897;</i>
+      <span class="btn-label">KPW Message</span>
+    </button>
+  </div>
 </header>
 
 <div class="container">
 
-  <!-- Success screen (hidden until submit) -->
   <div id="success-screen">
     <div class="check">&#10003;</div>
     <h2>Client Added!</h2>
-    <p id="success-msg">The client has been saved to the Agency Brain spreadsheet. Services are ready for research.</p>
+    <p id="success-msg">The client has been saved to the Agency Brain spreadsheet.</p>
     <button class="btn-another" onclick="resetForm()">Add Another Client</button>
   </div>
 
@@ -547,91 +554,181 @@
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   NIGHT SKY CANVAS
+   NIGHT SKY
 ═══════════════════════════════════════════════════════════════ */
 var canvas = document.getElementById('sky');
 var ctx    = canvas.getContext('2d');
 var W = 0, H = 0;
-var stars    = [];
-var shooters = [];
+var stars      = [];
+var milkyStars = [];
+var shooters   = [];
+
+/* Star color palettes — r,g,b triples */
+var STAR_COLORS = [
+  [255, 255, 255],   /* pure white        — most common */
+  [255, 255, 255],
+  [255, 255, 255],
+  [200, 215, 255],   /* cool blue-white   */
+  [210, 228, 255],   /* ice blue          */
+  [255, 248, 210],   /* warm yellow-white */
+  [225, 210, 255],   /* faint lavender    */
+];
+
+function rnd(min, max) { return min + Math.random() * (max - min); }
+function pick(arr)      { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function resizeCanvas() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
   buildStars();
+  buildMilkyWay();
 }
 
+/* ── Regular stars ──────────────────────────────────────────── */
 function buildStars() {
   stars = [];
-  var sizes = [
-    { count: 190, rMin: 0.3, rMax: 0.9,  speedMin: 0.006, speedMax: 0.028, alphaMin: 0.35, alphaMax: 0.75 },
-    { count:  55, rMin: 1.1, rMax: 1.8,  speedMin: 0.004, speedMax: 0.018, alphaMin: 0.45, alphaMax: 0.85 },
-    { count:  14, rMin: 2.0, rMax: 2.9,  speedMin: 0.002, speedMax: 0.012, alphaMin: 0.55, alphaMax: 1.0  }
+  var tiers = [
+    { n: 200, rMin: 0.25, rMax: 0.85, sMin: 0.005, sMax: 0.030, aMin: 0.30, aMax: 0.72 },
+    { n:  65, rMin: 1.0,  rMax: 1.85, sMin: 0.003, sMax: 0.018, aMin: 0.40, aMax: 0.88 },
+    { n:  18, rMin: 1.9,  rMax: 3.0,  sMin: 0.002, sMax: 0.010, aMin: 0.55, aMax: 1.0  },
   ];
-  sizes.forEach(function(cfg) {
-    for (var i = 0; i < cfg.count; i++) {
-      var base = cfg.alphaMin + Math.random() * (cfg.alphaMax - cfg.alphaMin);
+  tiers.forEach(function(t) {
+    for (var i = 0; i < t.n; i++) {
+      var c    = pick(STAR_COLORS);
+      var base = rnd(t.aMin, t.aMax);
       stars.push({
-        x:     Math.random() * W,
-        y:     Math.random() * H,
-        r:     cfg.rMin + Math.random() * (cfg.rMax - cfg.rMin),
-        phase: Math.random() * Math.PI * 2,
-        speed: cfg.speedMin + Math.random() * (cfg.speedMax - cfg.speedMin),
+        x: rnd(0, W), y: rnd(0, H),
+        r: rnd(t.rMin, t.rMax),
+        phase: rnd(0, Math.PI * 2),
+        speed: rnd(t.sMin, t.sMax),
         base:  base,
-        swing: (1 - base) * 0.55
+        swing: (1 - base) * 0.55,
+        cr: c[0], cg: c[1], cb: c[2]
       });
     }
   });
 }
 
+/* ── Milky Way band (drawn in rotated local space) ──────────── */
+function buildMilkyWay() {
+  milkyStars = [];
+  var ang  = -32 * Math.PI / 180;   /* diagonal tilt */
+  var cosA = Math.cos(ang);
+  var sinA = Math.sin(ang);
+  var cx   = W * 0.52, cy = H * 0.48;
+  var bLen = Math.hypot(W, H) * 1.25;
+  var bWid = W * 0.24;
+  var milkyC = [
+    [200, 215, 255],   /* blue-white */
+    [220, 205, 255],   /* purple-white */
+    [255, 255, 255],   /* white */
+    [185, 220, 255],   /* ice */
+    [255, 240, 200],   /* warm */
+  ];
+  var count = 0;
+  while (count < 420) {
+    var along = rnd(-bLen / 2, bLen / 2);
+    /* taper density: Gaussian-ish in perpendicular direction */
+    var norm  = rnd(-1, 1);
+    var perp  = norm * norm * norm * (bWid / 2);  /* cube bias = more dense centre */
+    var sx = cx + along * cosA - perp * sinA;
+    var sy = cy + along * sinA + perp * cosA;
+    if (sx < -5 || sx > W + 5 || sy < -5 || sy > H + 5) { continue; }
+    var fade  = 1 - Math.abs(perp) / (bWid / 2);
+    var base  = rnd(0.12, 0.65) * fade;
+    if (base < 0.06) { continue; }
+    var c = pick(milkyC);
+    milkyStars.push({
+      x: sx, y: sy,
+      r: rnd(0.18, 0.62),
+      phase: rnd(0, Math.PI * 2),
+      speed: rnd(0.003, 0.014),
+      base:  base,
+      swing: base * 0.45,
+      cr: c[0], cg: c[1], cb: c[2]
+    });
+    count++;
+  }
+}
+
+/* ── Shooting stars ─────────────────────────────────────────── */
 function buildShooters() {
   shooters = [];
-  for (var i = 0; i < 4; i++) {
-    shooters.push(newShooter(Math.random() * 7000 + 1500));
+  for (var i = 0; i < 13; i++) {
+    shooters.push(newShooter(rnd(400, 7000)));
   }
 }
 
 function newShooter(delay) {
-  var angleDeg = 20 + Math.random() * 35;
-  var angleRad = angleDeg * Math.PI / 180;
-  var spd      = 6 + Math.random() * 6;
+  var ang = rnd(18, 52) * Math.PI / 180;
+  var spd = rnd(11, 20);
+  /* spawn along top edge or left edge randomly */
+  var fromLeft = Math.random() < 0.35;
   return {
-    x:       Math.random() * W * 0.75,
-    y:       Math.random() * H * 0.45,
-    vx:      Math.cos(angleRad) * spd,
-    vy:      Math.sin(angleRad) * spd,
-    tailLen: 80 + Math.random() * 110,
+    x:       fromLeft ? rnd(-40, W * 0.1)  : rnd(W * 0.05, W * 0.82),
+    y:       fromLeft ? rnd(H * 0.05, H * 0.6) : rnd(-40, H * 0.38),
+    vx:      Math.cos(ang) * spd,
+    vy:      Math.sin(ang) * spd,
+    tailLen: rnd(160, 300),
+    width:   rnd(1.6, 2.8),
     age:     0,
-    maxAge:  38 + Math.random() * 38,
+    maxAge:  rnd(42, 80),
     delay:   delay,
     waiting: true,
     t0:      performance.now()
   };
 }
 
-var raf;
+/* ── Draw loop ──────────────────────────────────────────────── */
 function drawFrame(now) {
-  raf = requestAnimationFrame(drawFrame);
+  requestAnimationFrame(drawFrame);
 
-  /* Sky fill */
+  /* Background */
   ctx.fillStyle = '#0a0f1e';
   ctx.fillRect(0, 0, W, H);
 
-  /* Stars */
+  /* Milky Way soft glow band */
+  ctx.save();
+  ctx.translate(W * 0.52, H * 0.48);
+  ctx.rotate(-32 * Math.PI / 180);
+  var mw = W * 0.26, mh = Math.hypot(W, H) * 1.3;
+  var mwGrad = ctx.createLinearGradient(-mw / 2, 0, mw / 2, 0);
+  mwGrad.addColorStop(0,    'rgba(0,0,0,0)');
+  mwGrad.addColorStop(0.18, 'rgba(50,60,140,0.035)');
+  mwGrad.addColorStop(0.42, 'rgba(80,95,200,0.075)');
+  mwGrad.addColorStop(0.5,  'rgba(95,110,220,0.095)');
+  mwGrad.addColorStop(0.58, 'rgba(80,95,200,0.075)');
+  mwGrad.addColorStop(0.82, 'rgba(50,60,140,0.035)');
+  mwGrad.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = mwGrad;
+  ctx.fillRect(-mw / 2, -mh / 2, mw, mh);
+  ctx.restore();
+
+  /* Milky Way micro-stars */
+  for (var m = 0; m < milkyStars.length; m++) {
+    var ms = milkyStars[m];
+    ms.phase += ms.speed;
+    var ma = Math.max(0, ms.base + Math.sin(ms.phase) * ms.swing);
+    ctx.beginPath();
+    ctx.arc(ms.x, ms.y, ms.r, 0, 6.2832);
+    ctx.fillStyle = 'rgba(' + ms.cr + ',' + ms.cg + ',' + ms.cb + ',' + ma.toFixed(3) + ')';
+    ctx.fill();
+  }
+
+  /* Regular stars */
   for (var i = 0; i < stars.length; i++) {
     var s = stars[i];
     s.phase += s.speed;
-    var a = s.base + Math.sin(s.phase) * s.swing;
+    var a = Math.max(0, s.base + Math.sin(s.phase) * s.swing);
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.r, 0, 6.2832);
-    ctx.fillStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')';
+    ctx.fillStyle = 'rgba(' + s.cr + ',' + s.cg + ',' + s.cb + ',' + a.toFixed(3) + ')';
     ctx.fill();
   }
 
   /* Shooting stars */
   for (var j = 0; j < shooters.length; j++) {
     var sh = shooters[j];
-
     if (sh.waiting) {
       if (now - sh.t0 >= sh.delay) sh.waiting = false;
       continue;
@@ -641,35 +738,42 @@ function drawFrame(now) {
     sh.x += sh.vx;
     sh.y += sh.vy;
 
-    var p     = sh.age / sh.maxAge;
-    var alpha = p < 0.25 ? p / 0.25 : (p > 0.65 ? Math.max(0, 1 - (p - 0.65) / 0.35) : 1);
+    var p  = sh.age / sh.maxAge;
+    var al = p < 0.2 ? p / 0.2 : (p > 0.62 ? Math.max(0, 1 - (p - 0.62) / 0.38) : 1);
 
-    if (alpha > 0) {
-      var mag  = Math.hypot(sh.vx, sh.vy);
-      var tx   = sh.x - (sh.vx / mag) * sh.tailLen;
-      var ty   = sh.y - (sh.vy / mag) * sh.tailLen;
+    if (al > 0.01) {
+      var mag = Math.hypot(sh.vx, sh.vy);
+      var tx  = sh.x - (sh.vx / mag) * sh.tailLen;
+      var ty  = sh.y - (sh.vy / mag) * sh.tailLen;
 
-      var grad = ctx.createLinearGradient(tx, ty, sh.x, sh.y);
-      grad.addColorStop(0, 'rgba(255,255,255,0)');
-      grad.addColorStop(0.6, 'rgba(200,220,255,' + (alpha * 0.5).toFixed(3) + ')');
-      grad.addColorStop(1,   'rgba(255,255,255,' + alpha.toFixed(3) + ')');
+      /* tail gradient */
+      var g = ctx.createLinearGradient(tx, ty, sh.x, sh.y);
+      g.addColorStop(0,   'rgba(255,255,255,0)');
+      g.addColorStop(0.5, 'rgba(210,228,255,' + (al * 0.38).toFixed(3) + ')');
+      g.addColorStop(0.85,'rgba(235,245,255,' + (al * 0.75).toFixed(3) + ')');
+      g.addColorStop(1,   'rgba(255,255,255,' + al.toFixed(3) + ')');
 
       ctx.beginPath();
       ctx.moveTo(tx, ty);
       ctx.lineTo(sh.x, sh.y);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth   = 1.8;
+      ctx.strokeStyle = g;
+      ctx.lineWidth   = sh.width;
+      ctx.lineCap     = 'round';
       ctx.stroke();
 
-      /* bright head */
+      /* bright head glow */
+      var hg = ctx.createRadialGradient(sh.x, sh.y, 0, sh.x, sh.y, 5);
+      hg.addColorStop(0,   'rgba(255,255,255,' + al.toFixed(3) + ')');
+      hg.addColorStop(0.4, 'rgba(200,220,255,' + (al * 0.6).toFixed(3) + ')');
+      hg.addColorStop(1,   'rgba(150,180,255,0)');
       ctx.beginPath();
-      ctx.arc(sh.x, sh.y, 2, 0, 6.2832);
-      ctx.fillStyle = 'rgba(255,255,255,' + alpha.toFixed(3) + ')';
+      ctx.arc(sh.x, sh.y, 5, 0, 6.2832);
+      ctx.fillStyle = hg;
       ctx.fill();
     }
 
-    if (sh.age >= sh.maxAge || sh.x > W + 150 || sh.y > H + 150) {
-      shooters[j] = newShooter(3000 + Math.random() * 7000);
+    if (sh.age >= sh.maxAge || sh.x > W + 200 || sh.y > H + 200) {
+      shooters[j] = newShooter(rnd(1200, 5500));
     }
   }
 }
@@ -681,40 +785,77 @@ requestAnimationFrame(drawFrame);
 
 
 /* ═══════════════════════════════════════════════════════════════
-   MUSIC
+   AUDIO — new Audio() on first click guarantees browser allows it
 ═══════════════════════════════════════════════════════════════ */
-var audio     = document.getElementById('bgMusic');
-var musicBtn  = document.getElementById('musicBtn');
-var musicIcon = document.getElementById('musicIcon');
-var musicLbl  = document.getElementById('musicLabel');
-var isPlaying = false;
+var songAudio   = null;
+var msgAudio    = null;
+var songPlaying = false;
+var msgPlaying  = false;
 
-function toggleMusic() {
-  if (isPlaying) {
-    audio.pause();
-    isPlaying = false;
-    musicBtn.classList.remove('playing');
-    musicIcon.textContent = '♪';
-    musicLbl.textContent  = 'Play Music';
+function toggleSong(btn) {
+  /* Create on first click — satisfies autoplay policy */
+  if (!songAudio) {
+    songAudio = new Audio('Simpler_Than_You_Think.mp3');
+    songAudio.loop = true;
+  }
+  if (songPlaying) {
+    songAudio.pause();
+    songPlaying = false;
+    setSongState(btn, false);
   } else {
-    audio.play().then(function() {
-      isPlaying = true;
-      musicBtn.classList.add('playing');
-      musicIcon.textContent = '♫';
-      musicLbl.textContent  = 'Now Playing';
-    }).catch(function(err) {
-      console.warn('Audio play failed:', err);
-      musicLbl.textContent = 'Unavailable';
-    });
+    /* Stop message if running */
+    if (msgPlaying) { var mb = document.getElementById('msgBtn'); toggleMsg(mb); }
+    songAudio.play()
+      .then(function() {
+        songPlaying = true;
+        setSongState(btn, true);
+      })
+      .catch(function(e) {
+        console.warn('Song play failed:', e);
+        btn.querySelector('.btn-label').textContent = 'Unavailable';
+      });
   }
 }
 
-audio.addEventListener('ended', function() {
-  isPlaying = false;
-  musicBtn.classList.remove('playing');
-  musicIcon.textContent = '♪';
-  musicLbl.textContent  = 'Play Music';
-});
+function setSongState(btn, playing) {
+  btn.classList.toggle('active', playing);
+  btn.querySelector('.btn-icon').innerHTML  = playing ? '&#9646;&#9646;' : '&#9654;';
+  btn.querySelector('.btn-label').textContent = playing ? 'Pause Music' : 'Play Music';
+}
+
+function toggleMsg(btn) {
+  if (!msgAudio) {
+    msgAudio = new Audio('welcome_message.mp3');
+    msgAudio.addEventListener('ended', function() {
+      msgPlaying = false;
+      setMsgState(btn, false);
+    });
+  }
+  if (msgPlaying) {
+    msgAudio.pause();
+    msgAudio.currentTime = 0;
+    msgPlaying = false;
+    setMsgState(btn, false);
+  } else {
+    /* Stop song if running */
+    if (songPlaying) { var sb = document.getElementById('songBtn'); toggleSong(sb); }
+    msgAudio.play()
+      .then(function() {
+        msgPlaying = true;
+        setMsgState(btn, true);
+      })
+      .catch(function(e) {
+        console.warn('Message play failed:', e);
+        btn.querySelector('.btn-label').textContent = 'Unavailable';
+      });
+  }
+}
+
+function setMsgState(btn, playing) {
+  btn.classList.toggle('active', playing);
+  btn.querySelector('.btn-icon').innerHTML    = playing ? '&#9646;&#9646;' : '&#127897;';
+  btn.querySelector('.btn-label').textContent = playing ? 'Stop Message'  : 'KPW Message';
+}
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -724,7 +865,6 @@ var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdXb9RZydc60NF8q
 
 function handleSubmit(e) {
   e.preventDefault();
-
   var form   = document.getElementById('intake-form');
   var btn    = document.getElementById('btn-submit');
   var status = document.getElementById('status');
@@ -733,9 +873,9 @@ function handleSubmit(e) {
   var businessType = form.businessType.value.trim();
   var services     = form.services.value.trim();
 
-  if (!clientName)   { flash(status, 'error', 'Client name is required.');        form.clientName.focus();   return; }
-  if (!businessType) { flash(status, 'error', 'Business type is required.');      form.businessType.focus(); return; }
-  if (!services)     { flash(status, 'error', 'At least one service is required.'); form.services.focus();   return; }
+  if (!clientName)   { flash(status, 'error', 'Client name is required.');          form.clientName.focus();   return; }
+  if (!businessType) { flash(status, 'error', 'Business type is required.');        form.businessType.focus(); return; }
+  if (!services)     { flash(status, 'error', 'At least one service is required.'); form.services.focus();     return; }
 
   var payload = {
     clientName:      clientName,
@@ -798,16 +938,15 @@ function resetForm() {
   document.getElementById('intake-form').reset();
   document.getElementById('btn-submit').disabled = false;
   var st = document.getElementById('status');
-  st.className = '';
-  st.style.display = 'none';
+  st.className = ''; st.style.display = 'none';
   document.getElementById('success-screen').style.display = 'none';
   document.getElementById('intake-form').style.display = 'block';
   window.scrollTo(0, 0);
 }
 
 function flash(el, cls, msg) {
-  el.className    = cls;
-  el.textContent  = msg;
+  el.className   = cls;
+  el.textContent = msg;
 }
 </script>
 </body>
