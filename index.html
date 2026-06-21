@@ -267,6 +267,83 @@
       cursor: pointer;
     }
     .btn-another:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ── Toggle buttons ──────────────────────────────────────── */
+    .toggle-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+    .toggle-btn {
+      padding: 8px 16px;
+      background: rgba(4, 8, 20, 0.75);
+      border: 1px solid rgba(50, 70, 110, 0.85);
+      border-radius: 6px;
+      color: #9ca3af;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .toggle-btn.active {
+      background: rgba(230, 126, 34, 0.2);
+      border-color: var(--orange);
+      color: var(--orange);
+      font-weight: 700;
+    }
+
+    /* ── Field validation ────────────────────────────────────── */
+    .field-error input,
+    .field-error textarea,
+    .field-error select { border-color: var(--red) !important; }
+    .field-warn input,
+    .field-warn textarea,
+    .field-warn select  { border-color: #ca8a04 !important; }
+    .val-msg { font-size: 11px; margin-top: 3px; display: none; }
+    .field-error .val-msg { display: block; color: #fca5a5; }
+    .field-warn  .val-msg { display: block; color: #fcd34d; }
+
+    /* ── Validation warning modal ────────────────────────────── */
+    .val-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .val-overlay.open { display: flex; }
+    .val-modal {
+      background: #111827;
+      border: 1px solid rgba(50, 70, 110, 0.7);
+      border-radius: 12px;
+      padding: 28px 24px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .val-modal h3 { font-size: 17px; color: #fff; margin-bottom: 10px; }
+    .val-modal p  { font-size: 14px; color: #94a3b8; line-height: 1.6; margin-bottom: 20px; }
+    .val-modal-btns { display: flex; gap: 10px; }
+    .val-btn-back {
+      flex: 1;
+      background: none;
+      border: 1px solid rgba(50, 70, 110, 0.85);
+      color: #cbd5e1;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .val-btn-submit {
+      flex: 2;
+      background: var(--orange);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
   </style>
 </head>
 <body>
@@ -313,23 +390,26 @@
       </div>
       <div class="grid-2">
 
-        <div class="field col-span-2">
+        <div class="field col-span-2" id="wrap-clientName">
           <label>Client / Business Name <span class="req">*</span></label>
-          <input type="text" name="clientName" placeholder="Mike's Services LLC" required>
+          <input type="text" name="clientName" placeholder="Mike's Services LLC">
+          <span class="val-msg">Business name is required</span>
         </div>
 
-        <div class="field">
+        <div class="field" id="wrap-businessType">
           <label>Business Type <span class="req">*</span>
             <span class="hint">What they do in plain English</span>
           </label>
-          <input type="text" name="businessType" placeholder="Septic &amp; Excavation Contractor" required>
+          <input type="text" name="businessType" placeholder="Septic &amp; Excavation Contractor">
+          <span class="val-msg">Business type is required</span>
         </div>
 
-        <div class="field">
-          <label>Phone Number
+        <div class="field" id="wrap-phone">
+          <label>Phone Number <span class="req">*</span>
             <span class="hint">Used in every CTA and tel: links</span>
           </label>
           <input type="tel" name="phone" placeholder="785-488-7925">
+          <span class="val-msg">Phone number is required</span>
         </div>
 
         <div class="field">
@@ -381,6 +461,32 @@
           <input type="url" name="footerImageUrl" placeholder="https://...">
         </div>
 
+        <div class="field" id="wrap-email">
+          <label>Business Email
+            <span class="hint">Used in blog CTAs and contact sections</span>
+          </label>
+          <input type="email" name="email" placeholder="hello@yourbusiness.com">
+          <span class="val-msg">Email helps us build accurate CTAs — fill in when you can</span>
+        </div>
+
+        <div class="field col-span-2" id="wrap-hours">
+          <label>Hours of Operation
+            <span class="hint">How we tell customers when to reach you</span>
+          </label>
+          <input type="text" name="hours" placeholder="Mon–Fri 7am–6pm, Sat 8am–2pm, 24/7 emergency calls welcome">
+          <span class="val-msg">Hours help us write accurate GBP posts — add when you can</span>
+        </div>
+
+        <div class="field col-span-2">
+          <label>Do You Take Emergency or After-Hours Calls?</label>
+          <div class="toggle-group" id="emergency-toggle">
+            <button type="button" class="toggle-btn" data-value="Yes — 24/7" onclick="setToggle(this,'emergency-toggle','emergencyAfterHours')">Yes — 24/7</button>
+            <button type="button" class="toggle-btn" data-value="Yes — sometimes" onclick="setToggle(this,'emergency-toggle','emergencyAfterHours')">Yes — sometimes</button>
+            <button type="button" class="toggle-btn" data-value="No" onclick="setToggle(this,'emergency-toggle','emergencyAfterHours')">No</button>
+          </div>
+          <input type="hidden" name="emergencyAfterHours" id="emergencyAfterHours">
+        </div>
+
       </div>
     </div>
 
@@ -395,25 +501,35 @@
       </div>
       <div class="grid-1">
 
-        <div class="field">
+        <div class="field" id="wrap-services">
           <label>Services Offered <span class="req">*</span>
             <span class="hint">Comma-separated — each becomes a row in the Services tab</span>
           </label>
-          <textarea name="services" placeholder="Septic Installation, Septic Repair, Excavation, Land Clearing, Demolition" required></textarea>
+          <textarea name="services" placeholder="Septic Installation, Septic Repair, Excavation, Land Clearing, Demolition"></textarea>
+          <span class="val-msg">At least one service is required</span>
         </div>
 
-        <div class="field">
+        <div class="field" id="wrap-featuredService">
           <label>Featured / Primary Service
             <span class="hint">The one service that drives most revenue — gets a 1.25x priority boost</span>
           </label>
           <input type="text" name="featuredService" placeholder="Septic Installation">
+          <span class="val-msg">Featured service helps prioritize content — add when you can</span>
         </div>
 
         <div class="field">
-          <label>Service Area
+          <label>Service Area <span class="req">*</span>
             <span class="hint">Counties or cities served — used in geo-targeted content</span>
           </label>
-          <input type="text" name="serviceAreas" placeholder="Saline, Ottawa, Lincoln, Dickinson, Ellsworth, Cloud Counties">
+          <input type="text" name="serviceAreas" id="field-serviceAreas" placeholder="Saline, Ottawa, Lincoln, Dickinson, Ellsworth, Cloud Counties">
+          <span class="val-msg">Service area is required for geo-targeted content</span>
+        </div>
+
+        <div class="field">
+          <label>How Far Do You Travel for Jobs?
+            <span class="hint">Helps us geo-target your content accurately</span>
+          </label>
+          <input type="text" name="serviceRadius" placeholder="Usually within 60 miles of Salina, but will go further for the right job">
         </div>
 
       </div>
@@ -430,11 +546,12 @@
       </div>
       <div class="grid-1">
 
-        <div class="field">
+        <div class="field" id="wrap-customerWords">
           <label>Words Customers Use When They Call
             <span class="hint">Exact phrases — "my tank is backing up", "I need a hole dug", etc.</span>
           </label>
           <textarea name="customerWords" placeholder="My tank is backing up, I need a new septic, the drain field isn't working..."></textarea>
+          <span class="val-msg">Customer words make content sound like them — add when you can</span>
         </div>
 
         <div class="field">
@@ -550,6 +667,18 @@
     </div>
 
   </form>
+</div>
+
+<!-- Validation warning modal -->
+<div class="val-overlay" id="val-overlay">
+  <div class="val-modal">
+    <h3>A few fields are empty</h3>
+    <p>Your content will be more accurate with them filled in. Submit anyway or go back and add more detail?</p>
+    <div class="val-modal-btns">
+      <button class="val-btn-back" onclick="closeValModal()">Add More Detail</button>
+      <button class="val-btn-submit" onclick="forceSubmit()">Submit Anyway</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -861,50 +990,130 @@ function setMsgState(btn, playing) {
 /* ═══════════════════════════════════════════════════════════════
    FORM
 ═══════════════════════════════════════════════════════════════ */
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2ABgbLF214VNdyhsEpqyeG0pn6BUrXRq-OLfw4vA0L_edNmSqi5trdjRRKWlMo0bC/exec';
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrSrH2wwrFhTmrKk5uaEr969BpfdT2jwqtt_jMgSIMKNAl3zkpNAQT_aulpBrUYKS2/exec';
 
+var pendingPayload = null;
+
+/* ── Toggle buttons ──────────────────────────────────────────── */
+function setToggle(btn, groupId, inputId) {
+  document.querySelectorAll('#' + groupId + ' .toggle-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  document.getElementById(inputId).value = btn.getAttribute('data-value');
+}
+
+/* ── Validation helpers ──────────────────────────────────────── */
+function clearValidation() {
+  document.querySelectorAll('.field-error, .field-warn').forEach(function(f) {
+    f.classList.remove('field-error', 'field-warn');
+  });
+}
+
+function markField(wrapperId, type) {
+  var wrap = document.getElementById(wrapperId);
+  if (wrap) wrap.classList.add(type === 'error' ? 'field-error' : 'field-warn');
+}
+
+function closeValModal() {
+  document.getElementById('val-overlay').classList.remove('open');
+}
+
+function forceSubmit() {
+  closeValModal();
+  doSubmit(pendingPayload);
+}
+
+/* ── Main submit handler ─────────────────────────────────────── */
 function handleSubmit(e) {
   e.preventDefault();
+  clearValidation();
+
   var form   = document.getElementById('intake-form');
-  var btn    = document.getElementById('btn-submit');
   var status = document.getElementById('status');
 
-  var clientName   = form.clientName.value.trim();
-  var businessType = form.businessType.value.trim();
-  var services     = form.services.value.trim();
+  var clientName    = form.clientName.value.trim();
+  var businessType  = form.businessType.value.trim();
+  var phone         = form.phone.value.trim();
+  var services      = form.services.value.trim();
+  var serviceAreas  = form.serviceAreas.value.trim();
 
-  if (!clientName)   { flash(status, 'error', 'Client name is required.');          form.clientName.focus();   return; }
-  if (!businessType) { flash(status, 'error', 'Business type is required.');        form.businessType.focus(); return; }
-  if (!services)     { flash(status, 'error', 'At least one service is required.'); form.services.focus();     return; }
+  /* Required — block submit */
+  var blocked = false;
+  var firstEl = null;
+  function requireField(wrapperId, fieldName, msg) {
+    markField(wrapperId, 'error');
+    if (!blocked) {
+      flash(status, 'error', msg);
+      firstEl = form[fieldName];
+    }
+    blocked = true;
+  }
+
+  if (!clientName)   requireField('wrap-clientName',   'clientName',   'Client name is required.');
+  if (!businessType) requireField('wrap-businessType', 'businessType', 'Business type is required.');
+  if (!phone)        requireField('wrap-phone',        'phone',        'Phone number is required.');
+  if (!services)     requireField('wrap-services',     'services',     'At least one service is required.');
+  if (!serviceAreas) requireField('wrap-serviceAreas', 'serviceAreas', 'Service area is required.');
+
+  if (blocked) { if (firstEl) firstEl.focus(); return; }
+
+  /* Important — warn but allow */
+  var email          = form.email.value.trim();
+  var hours          = form.hours.value.trim();
+  var customerWords  = form.customerWords.value.trim();
+  var featuredService= form.featuredService.value.trim();
+  var hasWarnings    = false;
+
+  if (!email)          { markField('wrap-email',          'warn'); hasWarnings = true; }
+  if (!hours)          { markField('wrap-hours',          'warn'); hasWarnings = true; }
+  if (!customerWords)  { markField('wrap-customerWords',  'warn'); hasWarnings = true; }
+  if (!featuredService){ markField('wrap-featuredService','warn'); hasWarnings = true; }
 
   var payload = {
-    clientName:      clientName,
-    businessType:    businessType,
-    domain:          form.domain.value.trim(),
-    blogUrl:         form.blogUrl.value.trim(),
-    blogId:          form.blogId.value.trim(),
-    phone:           form.phone.value.trim(),
-    cta:             form.cta.value.trim(),
-    tagline:         form.tagline.value.trim(),
-    logoUrl:         form.logoUrl.value.trim(),
-    footerImageUrl:  form.footerImageUrl.value.trim(),
-    services:        services,
-    featuredService: form.featuredService.value.trim(),
-    serviceAreas:    form.serviceAreas.value.trim(),
-    customerWords:   form.customerWords.value.trim(),
-    whatSetsApart:   form.whatSetsApart.value.trim(),
-    bestReview:      form.bestReview.value.trim(),
-    recentJobPride:  form.recentJobPride.value.trim(),
-    busiestMonth:    form.busiestMonth.value,
-    slowestMonth:    form.slowestMonth.value,
-    topQ1:           form.topQ1.value.trim(),
-    topQ2:           form.topQ2.value.trim(),
-    topQ3:           form.topQ3.value.trim(),
-    jobsToAvoid:     form.jobsToAvoid.value.trim(),
-    competitorNotes: form.competitorNotes.value.trim(),
-    active:          'Yes'
+    clientName:          clientName,
+    businessType:        businessType,
+    domain:              form.domain.value.trim(),
+    blogUrl:             form.blogUrl.value.trim(),
+    blogId:              form.blogId.value.trim(),
+    phone:               phone,
+    email:               email,
+    hours:               hours,
+    emergencyAfterHours: form.emergencyAfterHours.value,
+    cta:                 form.cta.value.trim(),
+    tagline:             form.tagline.value.trim(),
+    logoUrl:             form.logoUrl.value.trim(),
+    footerImageUrl:      form.footerImageUrl.value.trim(),
+    services:            services,
+    featuredService:     featuredService,
+    serviceAreas:        serviceAreas,
+    serviceRadius:       form.serviceRadius.value.trim(),
+    customerWords:       customerWords,
+    whatSetsApart:       form.whatSetsApart.value.trim(),
+    bestReview:          form.bestReview.value.trim(),
+    recentJobPride:      form.recentJobPride.value.trim(),
+    busiestMonth:        form.busiestMonth.value,
+    slowestMonth:        form.slowestMonth.value,
+    topQ1:               form.topQ1.value.trim(),
+    topQ2:               form.topQ2.value.trim(),
+    topQ3:               form.topQ3.value.trim(),
+    jobsToAvoid:         form.jobsToAvoid.value.trim(),
+    competitorNotes:     form.competitorNotes.value.trim(),
+    active:              'Yes'
   };
 
+  if (hasWarnings) {
+    pendingPayload = payload;
+    document.getElementById('val-overlay').classList.add('open');
+    return;
+  }
+
+  doSubmit(payload);
+}
+
+function doSubmit(payload) {
+  var btn    = document.getElementById('btn-submit');
+  var status = document.getElementById('status');
   btn.disabled = true;
   flash(status, 'loading', 'Saving to Agency Brain…');
 
@@ -915,8 +1124,8 @@ function handleSubmit(e) {
     body:    JSON.stringify(payload)
   })
   .then(function() {
-    var svcList = services.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
-    showSuccess(clientName, svcList.length);
+    var svcList = payload.services.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    showSuccess(payload.clientName, svcList.length);
   })
   .catch(function(err) {
     btn.disabled = false;
@@ -937,10 +1146,13 @@ function showSuccess(name, svcCount) {
 function resetForm() {
   document.getElementById('intake-form').reset();
   document.getElementById('btn-submit').disabled = false;
+  clearValidation();
+  document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('emergencyAfterHours').value = '';
   var st = document.getElementById('status');
   st.className = ''; st.style.display = 'none';
   document.getElementById('success-screen').style.display = 'none';
-  document.getElementById('intake-form').style.display = 'block';
+  document.getElementById('intake-form').style.display    = 'block';
   window.scrollTo(0, 0);
 }
 
