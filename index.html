@@ -10,35 +10,42 @@
     :root {
       --orange:  #E67E22;
       --orange2: #ca6f1e;
-      --bg:      #0f172a;
-      --card:    #1e293b;
-      --border:  #334155;
-      --text:    #e2e8f0;
-      --muted:   #94a3b8;
-      --dim:     #64748b;
       --green:   #16a34a;
       --red:     #dc2626;
     }
 
     body {
       font-family: 'Google Sans', -apple-system, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      color: #ffffff;
       min-height: 100vh;
       padding-bottom: 60px;
+      background: #0a0f1e;
     }
 
-    /* ── Header ─────────────────────────────────────────────── */
+    /* ── Night sky canvas ─────────────────────────────────────── */
+    #sky {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      display: block;
+    }
+
+    /* ── Everything sits above the canvas ─────────────────────── */
+    .site-header, .container { position: relative; z-index: 1; }
+
+    /* ── Header ──────────────────────────────────────────────── */
     .site-header {
-      background: var(--card);
+      background: rgba(6, 10, 24, 0.96);
       border-bottom: 3px solid var(--orange);
-      padding: 18px 24px;
+      padding: 14px 24px;
       display: flex;
       align-items: center;
       gap: 14px;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 100;
+      backdrop-filter: blur(10px);
     }
     .logo {
       width: 44px; height: 44px;
@@ -49,23 +56,59 @@
       letter-spacing: -0.5px;
       flex-shrink: 0;
     }
+    .header-text { flex: 1; }
     .site-header h1 { font-size: 18px; font-weight: 700; color: #fff; line-height: 1; }
-    .site-header p  { font-size: 12px; color: var(--dim); margin-top: 3px; }
+    .site-header p  { font-size: 12px; color: #9ca3af; margin-top: 3px; }
 
-    /* ── Layout ─────────────────────────────────────────────── */
+    /* ── Music button ─────────────────────────────────────────── */
+    .music-btn {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      background: rgba(230, 126, 34, 0.12);
+      border: 1.5px solid rgba(230, 126, 34, 0.45);
+      border-radius: 24px;
+      color: #E67E22;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      font-family: inherit;
+      letter-spacing: 0.2px;
+    }
+    .music-btn:hover {
+      background: rgba(230, 126, 34, 0.24);
+      border-color: #E67E22;
+    }
+    .music-btn.playing {
+      background: rgba(230, 126, 34, 0.2);
+      border-color: #E67E22;
+      color: #fbbf24;
+    }
+    .music-icon { font-size: 17px; line-height: 1; }
+    @keyframes pulse-note {
+      0%, 100% { transform: scale(1);   opacity: 1; }
+      50%       { transform: scale(1.2); opacity: 0.7; }
+    }
+    .music-btn.playing .music-icon { animation: pulse-note 1.4s ease-in-out infinite; }
+
+    /* ── Layout ──────────────────────────────────────────────── */
     .container {
       max-width: 760px;
       margin: 0 auto;
       padding: 28px 20px;
     }
 
-    /* ── Section cards ──────────────────────────────────────── */
+    /* ── Section cards ────────────────────────────────────────── */
     .section {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: rgba(8, 14, 30, 0.87);
+      border: 1px solid rgba(50, 70, 110, 0.7);
       border-radius: 10px;
       padding: 22px 24px;
       margin-bottom: 20px;
+      backdrop-filter: blur(8px);
     }
     .section-header {
       display: flex;
@@ -73,7 +116,7 @@
       gap: 10px;
       margin-bottom: 18px;
       padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(50, 70, 110, 0.6);
     }
     .section-num {
       width: 26px; height: 26px;
@@ -84,9 +127,9 @@
       flex-shrink: 0;
     }
     .section-title { font-size: 15px; font-weight: 700; color: #fff; }
-    .section-desc  { font-size: 12px; color: var(--dim); margin-top: 2px; }
+    .section-desc  { font-size: 12px; color: #9ca3af; margin-top: 2px; }
 
-    /* ── Field grid ─────────────────────────────────────────── */
+    /* ── Field grid ───────────────────────────────────────────── */
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -100,24 +143,25 @@
       .col-span-2 { grid-column: 1; }
     }
 
-    /* ── Labels and inputs ──────────────────────────────────── */
+    /* ── Labels and inputs ────────────────────────────────────── */
     .field { display: flex; flex-direction: column; gap: 5px; }
+
     label {
       font-size: 11px;
       font-weight: 700;
-      color: var(--muted);
+      color: #f1f5f9;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     label .req { color: var(--orange); margin-left: 2px; }
     label .hint {
       font-size: 10px;
-      color: var(--dim);
+      color: #9ca3af;
       font-weight: 400;
       text-transform: none;
       letter-spacing: 0;
       display: block;
-      margin-top: 1px;
+      margin-top: 2px;
     }
 
     input[type=text],
@@ -128,10 +172,10 @@
     select {
       width: 100%;
       padding: 9px 12px;
-      background: var(--bg);
-      border: 1px solid var(--border);
+      background: rgba(4, 8, 20, 0.75);
+      border: 1px solid rgba(50, 70, 110, 0.85);
       border-radius: 6px;
-      color: var(--text);
+      color: #ffffff;
       font-size: 13px;
       font-family: inherit;
       transition: border-color 0.15s;
@@ -140,10 +184,11 @@
       outline: none;
       border-color: var(--orange);
     }
-    ::placeholder { color: var(--dim); }
+    ::placeholder { color: #9ca3af; }
     textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+    select option { background: #0d1628; color: #ffffff; }
 
-    /* ── Submit area ────────────────────────────────────────── */
+    /* ── Submit area ──────────────────────────────────────────── */
     .submit-area {
       display: flex;
       flex-direction: column;
@@ -168,7 +213,7 @@
     .btn-submit:hover:not(:disabled) { background: var(--orange2); }
     .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    /* ── Status messages ────────────────────────────────────── */
+    /* ── Status messages ──────────────────────────────────────── */
     #status {
       width: 100%;
       max-width: 360px;
@@ -183,11 +228,15 @@
     #status.success { background: #14432a; color: #4ade80;        border: 1px solid #16a34a; display: block; }
     #status.error   { background: #4a1515; color: #fca5a5;        border: 1px solid var(--red); display: block; }
 
-    /* ── Success screen ─────────────────────────────────────── */
+    /* ── Success screen ───────────────────────────────────────── */
     #success-screen {
       display: none;
       text-align: center;
       padding: 48px 24px;
+      background: rgba(8, 14, 30, 0.88);
+      border: 1px solid rgba(50, 70, 110, 0.7);
+      border-radius: 10px;
+      backdrop-filter: blur(8px);
     }
     #success-screen .check {
       width: 64px; height: 64px;
@@ -198,12 +247,12 @@
       margin: 0 auto 20px;
     }
     #success-screen h2 { font-size: 22px; color: #fff; margin-bottom: 10px; }
-    #success-screen p  { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 380px; margin: 0 auto 24px; }
+    #success-screen p  { font-size: 14px; color: #cbd5e1; line-height: 1.6; max-width: 380px; margin: 0 auto 24px; }
     .btn-another {
       padding: 11px 24px;
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: rgba(8, 14, 30, 0.9);
+      color: #e2e8f0;
+      border: 1px solid rgba(50, 70, 110, 0.8);
       border-radius: 8px;
       font-size: 13px;
       font-weight: 700;
@@ -214,12 +263,24 @@
 </head>
 <body>
 
+<!-- Night sky canvas — drawn by JS below -->
+<canvas id="sky"></canvas>
+
+<!-- Background music -->
+<audio id="bgMusic" loop>
+  <source src="Simpler_Than_You_Think.mp3" type="audio/mpeg">
+</audio>
+
 <header class="site-header">
   <div class="logo">KPW</div>
-  <div>
+  <div class="header-text">
     <h1>Client Intake Form</h1>
     <p>Kansas Prairie Webworks — fills directly into Agency Brain</p>
   </div>
+  <button class="music-btn" id="musicBtn" onclick="toggleMusic()" title="Play background music">
+    <span class="music-icon" id="musicIcon">♪</span>
+    <span class="music-label" id="musicLabel">Play Music</span>
+  </button>
 </header>
 
 <div class="container">
@@ -485,99 +546,269 @@
 </div>
 
 <script>
-  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdXb9RZydc60NF8qHyoGS7NyCgVkc13d9u7HM-bRon3rOpMR-Qbhtf6TofOIDpIwGa/exec';
+/* ═══════════════════════════════════════════════════════════════
+   NIGHT SKY CANVAS
+═══════════════════════════════════════════════════════════════ */
+var canvas = document.getElementById('sky');
+var ctx    = canvas.getContext('2d');
+var W = 0, H = 0;
+var stars    = [];
+var shooters = [];
 
-  function handleSubmit(e) {
-    e.preventDefault();
+function resizeCanvas() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  buildStars();
+}
 
-    var form   = document.getElementById('intake-form');
-    var btn    = document.getElementById('btn-submit');
-    var status = document.getElementById('status');
+function buildStars() {
+  stars = [];
+  var sizes = [
+    { count: 190, rMin: 0.3, rMax: 0.9,  speedMin: 0.006, speedMax: 0.028, alphaMin: 0.35, alphaMax: 0.75 },
+    { count:  55, rMin: 1.1, rMax: 1.8,  speedMin: 0.004, speedMax: 0.018, alphaMin: 0.45, alphaMax: 0.85 },
+    { count:  14, rMin: 2.0, rMax: 2.9,  speedMin: 0.002, speedMax: 0.012, alphaMin: 0.55, alphaMax: 1.0  }
+  ];
+  sizes.forEach(function(cfg) {
+    for (var i = 0; i < cfg.count; i++) {
+      var base = cfg.alphaMin + Math.random() * (cfg.alphaMax - cfg.alphaMin);
+      stars.push({
+        x:     Math.random() * W,
+        y:     Math.random() * H,
+        r:     cfg.rMin + Math.random() * (cfg.rMax - cfg.rMin),
+        phase: Math.random() * Math.PI * 2,
+        speed: cfg.speedMin + Math.random() * (cfg.speedMax - cfg.speedMin),
+        base:  base,
+        swing: (1 - base) * 0.55
+      });
+    }
+  });
+}
 
-    // Basic required field validation
-    var clientName = form.clientName.value.trim();
-    var businessType = form.businessType.value.trim();
-    var services = form.services.value.trim();
+function buildShooters() {
+  shooters = [];
+  for (var i = 0; i < 4; i++) {
+    shooters.push(newShooter(Math.random() * 7000 + 1500));
+  }
+}
 
-    if (!clientName) { flash(status, 'error', 'Client name is required.'); form.clientName.focus(); return; }
-    if (!businessType) { flash(status, 'error', 'Business type is required.'); form.businessType.focus(); return; }
-    if (!services) { flash(status, 'error', 'At least one service is required.'); form.services.focus(); return; }
+function newShooter(delay) {
+  var angleDeg = 20 + Math.random() * 35;
+  var angleRad = angleDeg * Math.PI / 180;
+  var spd      = 6 + Math.random() * 6;
+  return {
+    x:       Math.random() * W * 0.75,
+    y:       Math.random() * H * 0.45,
+    vx:      Math.cos(angleRad) * spd,
+    vy:      Math.sin(angleRad) * spd,
+    tailLen: 80 + Math.random() * 110,
+    age:     0,
+    maxAge:  38 + Math.random() * 38,
+    delay:   delay,
+    waiting: true,
+    t0:      performance.now()
+  };
+}
 
-    // Build payload matching saveClientData_ field names
-    var payload = {
-      clientName:      clientName,
-      businessType:    businessType,
-      domain:          form.domain.value.trim(),
-      blogUrl:         form.blogUrl.value.trim(),
-      blogId:          form.blogId.value.trim(),
-      phone:           form.phone.value.trim(),
-      cta:             form.cta.value.trim(),
-      tagline:         form.tagline.value.trim(),
-      logoUrl:         form.logoUrl.value.trim(),
-      footerImageUrl:  form.footerImageUrl.value.trim(),
-      services:        services,
-      featuredService: form.featuredService.value.trim(),
-      serviceAreas:    form.serviceAreas.value.trim(),
-      customerWords:   form.customerWords.value.trim(),
-      whatSetsApart:   form.whatSetsApart.value.trim(),
-      bestReview:      form.bestReview.value.trim(),
-      recentJobPride:  form.recentJobPride.value.trim(),
-      busiestMonth:    form.busiestMonth.value,
-      slowestMonth:    form.slowestMonth.value,
-      topQ1:           form.topQ1.value.trim(),
-      topQ2:           form.topQ2.value.trim(),
-      topQ3:           form.topQ3.value.trim(),
-      jobsToAvoid:     form.jobsToAvoid.value.trim(),
-      competitorNotes: form.competitorNotes.value.trim(),
-      active:          'Yes'
-    };
+var raf;
+function drawFrame(now) {
+  raf = requestAnimationFrame(drawFrame);
 
-    btn.disabled = true;
-    flash(status, 'loading', 'Saving to Agency Brain…');
+  /* Sky fill */
+  ctx.fillStyle = '#0a0f1e';
+  ctx.fillRect(0, 0, W, H);
 
-    // Apps Script doesn't send CORS headers, so we use no-cors.
-    // The data is posted successfully; we can't read the response body.
-    fetch(APPS_SCRIPT_URL, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body:    JSON.stringify(payload)
-    })
-    .then(function() {
-      var svcList = services.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
-      showSuccess(clientName, svcList.length);
-    })
-    .catch(function(err) {
-      btn.disabled = false;
-      flash(status, 'error', 'Network error — check your connection and try again.');
-      console.error(err);
+  /* Stars */
+  for (var i = 0; i < stars.length; i++) {
+    var s = stars[i];
+    s.phase += s.speed;
+    var a = s.base + Math.sin(s.phase) * s.swing;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, 6.2832);
+    ctx.fillStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')';
+    ctx.fill();
+  }
+
+  /* Shooting stars */
+  for (var j = 0; j < shooters.length; j++) {
+    var sh = shooters[j];
+
+    if (sh.waiting) {
+      if (now - sh.t0 >= sh.delay) sh.waiting = false;
+      continue;
+    }
+
+    sh.age++;
+    sh.x += sh.vx;
+    sh.y += sh.vy;
+
+    var p     = sh.age / sh.maxAge;
+    var alpha = p < 0.25 ? p / 0.25 : (p > 0.65 ? Math.max(0, 1 - (p - 0.65) / 0.35) : 1);
+
+    if (alpha > 0) {
+      var mag  = Math.hypot(sh.vx, sh.vy);
+      var tx   = sh.x - (sh.vx / mag) * sh.tailLen;
+      var ty   = sh.y - (sh.vy / mag) * sh.tailLen;
+
+      var grad = ctx.createLinearGradient(tx, ty, sh.x, sh.y);
+      grad.addColorStop(0, 'rgba(255,255,255,0)');
+      grad.addColorStop(0.6, 'rgba(200,220,255,' + (alpha * 0.5).toFixed(3) + ')');
+      grad.addColorStop(1,   'rgba(255,255,255,' + alpha.toFixed(3) + ')');
+
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(sh.x, sh.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth   = 1.8;
+      ctx.stroke();
+
+      /* bright head */
+      ctx.beginPath();
+      ctx.arc(sh.x, sh.y, 2, 0, 6.2832);
+      ctx.fillStyle = 'rgba(255,255,255,' + alpha.toFixed(3) + ')';
+      ctx.fill();
+    }
+
+    if (sh.age >= sh.maxAge || sh.x > W + 150 || sh.y > H + 150) {
+      shooters[j] = newShooter(3000 + Math.random() * 7000);
+    }
+  }
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+buildShooters();
+requestAnimationFrame(drawFrame);
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MUSIC
+═══════════════════════════════════════════════════════════════ */
+var audio     = document.getElementById('bgMusic');
+var musicBtn  = document.getElementById('musicBtn');
+var musicIcon = document.getElementById('musicIcon');
+var musicLbl  = document.getElementById('musicLabel');
+var isPlaying = false;
+
+function toggleMusic() {
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    musicBtn.classList.remove('playing');
+    musicIcon.textContent = '♪';
+    musicLbl.textContent  = 'Play Music';
+  } else {
+    audio.play().then(function() {
+      isPlaying = true;
+      musicBtn.classList.add('playing');
+      musicIcon.textContent = '♫';
+      musicLbl.textContent  = 'Now Playing';
+    }).catch(function(err) {
+      console.warn('Audio play failed:', err);
+      musicLbl.textContent = 'Unavailable';
     });
   }
+}
 
-  function showSuccess(name, svcCount) {
-    document.getElementById('intake-form').style.display = 'none';
-    var screen = document.getElementById('success-screen');
-    document.getElementById('success-msg').textContent =
-      name + ' has been saved to the Agency Brain spreadsheet with ' +
-      svcCount + ' service' + (svcCount === 1 ? '' : 's') +
-      '. Go to the spreadsheet → KPW Brain → Research Selected Service to start generating content.';
-    screen.style.display = 'block';
-  }
+audio.addEventListener('ended', function() {
+  isPlaying = false;
+  musicBtn.classList.remove('playing');
+  musicIcon.textContent = '♪';
+  musicLbl.textContent  = 'Play Music';
+});
 
-  function resetForm() {
-    document.getElementById('intake-form').reset();
-    document.getElementById('btn-submit').disabled = false;
-    document.getElementById('status').className = '';
-    document.getElementById('status').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'none';
-    document.getElementById('intake-form').style.display = 'block';
-    window.scrollTo(0, 0);
-  }
 
-  function flash(el, cls, msg) {
-    el.className = cls;
-    el.textContent = msg;
-  }
+/* ═══════════════════════════════════════════════════════════════
+   FORM
+═══════════════════════════════════════════════════════════════ */
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdXb9RZydc60NF8qHyoGS7NyCgVkc13d9u7HM-bRon3rOpMR-Qbhtf6TofOIDpIwGa/exec';
+
+function handleSubmit(e) {
+  e.preventDefault();
+
+  var form   = document.getElementById('intake-form');
+  var btn    = document.getElementById('btn-submit');
+  var status = document.getElementById('status');
+
+  var clientName   = form.clientName.value.trim();
+  var businessType = form.businessType.value.trim();
+  var services     = form.services.value.trim();
+
+  if (!clientName)   { flash(status, 'error', 'Client name is required.');        form.clientName.focus();   return; }
+  if (!businessType) { flash(status, 'error', 'Business type is required.');      form.businessType.focus(); return; }
+  if (!services)     { flash(status, 'error', 'At least one service is required.'); form.services.focus();   return; }
+
+  var payload = {
+    clientName:      clientName,
+    businessType:    businessType,
+    domain:          form.domain.value.trim(),
+    blogUrl:         form.blogUrl.value.trim(),
+    blogId:          form.blogId.value.trim(),
+    phone:           form.phone.value.trim(),
+    cta:             form.cta.value.trim(),
+    tagline:         form.tagline.value.trim(),
+    logoUrl:         form.logoUrl.value.trim(),
+    footerImageUrl:  form.footerImageUrl.value.trim(),
+    services:        services,
+    featuredService: form.featuredService.value.trim(),
+    serviceAreas:    form.serviceAreas.value.trim(),
+    customerWords:   form.customerWords.value.trim(),
+    whatSetsApart:   form.whatSetsApart.value.trim(),
+    bestReview:      form.bestReview.value.trim(),
+    recentJobPride:  form.recentJobPride.value.trim(),
+    busiestMonth:    form.busiestMonth.value,
+    slowestMonth:    form.slowestMonth.value,
+    topQ1:           form.topQ1.value.trim(),
+    topQ2:           form.topQ2.value.trim(),
+    topQ3:           form.topQ3.value.trim(),
+    jobsToAvoid:     form.jobsToAvoid.value.trim(),
+    competitorNotes: form.competitorNotes.value.trim(),
+    active:          'Yes'
+  };
+
+  btn.disabled = true;
+  flash(status, 'loading', 'Saving to Agency Brain…');
+
+  fetch(APPS_SCRIPT_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body:    JSON.stringify(payload)
+  })
+  .then(function() {
+    var svcList = services.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    showSuccess(clientName, svcList.length);
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    flash(status, 'error', 'Network error — check your connection and try again.');
+    console.error(err);
+  });
+}
+
+function showSuccess(name, svcCount) {
+  document.getElementById('intake-form').style.display = 'none';
+  document.getElementById('success-msg').textContent =
+    name + ' has been saved to the Agency Brain spreadsheet with ' +
+    svcCount + ' service' + (svcCount === 1 ? '' : 's') +
+    '. Go to the spreadsheet → KPW Brain → Research Selected Service to start generating content.';
+  document.getElementById('success-screen').style.display = 'block';
+}
+
+function resetForm() {
+  document.getElementById('intake-form').reset();
+  document.getElementById('btn-submit').disabled = false;
+  var st = document.getElementById('status');
+  st.className = '';
+  st.style.display = 'none';
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('intake-form').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function flash(el, cls, msg) {
+  el.className    = cls;
+  el.textContent  = msg;
+}
 </script>
 </body>
 </html>
