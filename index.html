@@ -439,7 +439,7 @@
   <div class="logo">KPW</div>
   <div class="header-text">
     <h1>Client Intake Form</h1>
-    <p>Kansas Prairie Webworks &mdash; fills directly into Agency Brain</p>
+    <p>Kansas Prairie Webworks &mdash; your info goes straight to our team</p>
   </div>
   <div class="audio-btns">
     <button class="audio-btn" id="songBtn" onclick="toggleSong(this)">
@@ -457,8 +457,8 @@
 
   <div id="success-screen">
     <div class="check">&#10003;</div>
-    <h2>Client Added!</h2>
-    <p id="success-msg">The client has been saved to the Agency Brain spreadsheet.</p>
+    <h2>You're all set!</h2>
+    <p id="success-msg">We've got everything we need. You'll hear from us soon &mdash; watch your email.</p>
     <button class="btn-another" onclick="resetForm()">Add Another Client</button>
   </div>
 
@@ -483,7 +483,7 @@
 
         <div class="field" id="wrap-businessType">
           <label>Business Type <span class="req">*</span>
-            <span class="hint">What they do in plain English</span>
+            <span class="hint">What you do in plain English</span>
           </label>
           <input type="text" name="businessType" placeholder="Plumber, Bakery, Contractor, Salon...">
           <span class="val-msg">Business type is required</span>
@@ -491,7 +491,7 @@
 
         <div class="field" id="wrap-phone">
           <label>Phone Number <span class="req">*</span>
-            <span class="hint">Used in every CTA and tel: links</span>
+            <span class="hint">Goes on every page and post so customers can reach you fast</span>
           </label>
           <input type="tel" name="phone" placeholder="Your business phone number">
           <span class="val-msg">Phone number is required</span>
@@ -526,18 +526,18 @@
 
         <div class="field col-span-2">
           <label>Tagline
-            <span class="hint">Short positioning statement &mdash; one sentence max</span>
+            <span class="hint">What makes you different, in one sentence</span>
           </label>
           <input type="text" name="tagline" placeholder="What makes your business different in one sentence">
         </div>
 
         <div class="col-span-2 info-card">
-          &#128248; Logo and photos are uploaded in your Client Portal &mdash; you'll receive that link after this form. We handle all the rest.
+          &#128248; Logo and photos get uploaded separately &mdash; we'll send you a link to do that after this form. We handle everything else.
         </div>
 
         <div class="field" id="wrap-email">
           <label>Business Email
-            <span class="hint">Used in blog CTAs and contact sections</span>
+            <span class="hint">We add this to your contact sections and blog pages</span>
           </label>
           <input type="email" name="email" placeholder="hello@yourbusiness.com">
           <span class="val-msg">Email helps us build accurate CTAs &mdash; fill in when you can</span>
@@ -553,7 +553,7 @@
 
         <div class="field col-span-2">
           <label>Website URL
-            <span class="hint">Their current website &mdash; leave blank if they don't have one yet</span>
+            <span class="hint">Your current website &mdash; leave it blank if you don't have one yet</span>
           </label>
           <input type="url" name="domain" placeholder="https://yourbusiness.com">
         </div>
@@ -638,13 +638,13 @@
           <div class="grid-2">
             <div class="field">
               <label>Google Business URL
-                <span class="hint">Your GBP listing link</span>
+                <span class="hint">Your Google Business link</span>
               </label>
               <input type="url" name="googleBusinessUrl" id="googleBusinessUrl" placeholder="https://g.page/yourbusiness">
             </div>
             <div class="field">
               <label>Google Place ID
-                <span class="hint">Find in your GBP dashboard URL</span>
+                <span class="hint">Find this in your Google Business dashboard</span>
               </label>
               <input type="text" name="googlePlaceId" id="googlePlaceId" placeholder="ChIJ...">
             </div>
@@ -720,14 +720,14 @@
         <div class="section-num">2</div>
         <div>
           <div class="section-title">Services</div>
-          <div class="section-desc">Each service gets its own research and content pipeline</div>
+          <div class="section-desc">We write separate posts and pages for each one</div>
         </div>
       </div>
       <div class="grid-1">
 
         <div class="field" id="wrap-services">
           <label>Services Offered <span class="req">*</span>
-            <span class="hint">Comma-separated &mdash; each becomes a row in the Services tab</span>
+            <span class="hint">Separate them with commas &mdash; we'll build content for each one</span>
           </label>
           <textarea name="services" placeholder="Service 1, Service 2, Service 3..."></textarea>
           <span class="val-msg">At least one service is required</span>
@@ -735,7 +735,7 @@
 
         <div class="field" id="wrap-featuredService">
           <label>Featured / Primary Service
-            <span class="hint">The one service that drives most revenue &mdash; gets a 1.25x priority boost</span>
+            <span class="hint">Your most important service &mdash; we lean hardest on this one when creating content</span>
           </label>
           <input type="text" name="featuredService" placeholder="Your most important service">
           <span class="val-msg">Featured service helps prioritize content &mdash; add when you can</span>
@@ -743,7 +743,7 @@
 
         <div class="field">
           <label>Service Area <span class="req">*</span>
-            <span class="hint">Counties or cities served &mdash; used in geo-targeted content</span>
+            <span class="hint">The cities and counties you work in &mdash; we mention these in every post and page</span>
           </label>
           <input type="text" name="serviceAreas" id="field-serviceAreas" placeholder="Cities and counties you serve">
           <span class="val-msg">Service area is required for geo-targeted content</span>
@@ -751,7 +751,7 @@
 
         <div class="field">
           <label>How Far Do You Travel for Jobs?
-            <span class="hint">Helps us geo-target your content accurately</span>
+            <span class="hint">We use this to keep your content focused on where you actually work</span>
           </label>
           <input type="text" name="serviceRadius" placeholder="How far you typically travel for jobs">
         </div>
@@ -765,7 +765,7 @@
         <div class="section-num">3</div>
         <div>
           <div class="section-title">Voice &amp; Story</div>
-          <div class="section-desc">This is what makes content sound like them &mdash; not a generic contractor</div>
+          <div class="section-desc">This is what makes your content sound like you &mdash; not a generic contractor</div>
         </div>
       </div>
       <div class="grid-1">
@@ -779,7 +779,7 @@
         </div>
 
         <div class="field">
-          <label>What Sets This Business Apart
+          <label>What Sets You Apart
             <span class="hint">Real differentiators &mdash; not marketing speak. What do repeat customers say?</span>
           </label>
           <textarea name="whatSetsApart" placeholder="What do you do that competitors around you don't?"></textarea>
@@ -787,13 +787,13 @@
 
         <div class="field">
           <label>Best Customer Review
-            <span class="hint">Paste a real review &mdash; language and sentiment gets woven into content naturally</span>
+            <span class="hint">Paste a real review &mdash; the way your customers talk goes right into your content</span>
           </label>
           <textarea name="bestReview" placeholder="Paste your best Google review word for word"></textarea>
         </div>
 
         <div class="field">
-          <label>Recent Job They're Proud Of
+          <label>A Recent Job You're Proud Of
             <span class="hint">Specific job &mdash; property type, county, what made it memorable</span>
           </label>
           <textarea name="recentJobPride" placeholder="Describe a recent job &mdash; property type, location, what made it special"></textarea>
@@ -860,21 +860,21 @@
         <div class="section-num">5</div>
         <div>
           <div class="section-title">Other Details</div>
-          <div class="section-desc">Helps Claude avoid bad fits and write smarter content</div>
+          <div class="section-desc">Helps us avoid bad fits and write smarter content</div>
         </div>
       </div>
       <div class="grid-1">
 
         <div class="field">
-          <label>Jobs They Avoid or Turn Down
-            <span class="hint">Helps Claude never accidentally pitch a service they don't want</span>
+          <label>Jobs You Turn Down
+            <span class="hint">So we never accidentally pitch work you don't want</span>
           </label>
           <textarea name="jobsToAvoid" placeholder="Work types or job sizes you turn down"></textarea>
         </div>
 
         <div class="field">
           <label>Competitor Notes
-            <span class="hint">Who they compete with and what they do better &mdash; kept private, used to sharpen angles</span>
+            <span class="hint">Who you compete with and what they do better &mdash; kept private, used to sharpen your angles</span>
           </label>
           <textarea name="competitorNotes" placeholder="What do competitors do that you don't? No names needed."></textarea>
         </div>
@@ -886,7 +886,7 @@
     <div class="submit-area">
       <div id="status"></div>
       <button type="submit" class="btn-submit" id="btn-submit">
-        Save Client to Agency Brain
+        Send to Kansas Prairie Webworks
       </button>
     </div>
 
@@ -1421,7 +1421,7 @@ function doSubmit(payload) {
   var btn    = document.getElementById('btn-submit');
   var status = document.getElementById('status');
   btn.disabled = true;
-  flash(status, 'loading', 'Saving to Agency Brain…');
+  flash(status, 'loading', 'Saving your info…');
 
   fetch(APPS_SCRIPT_URL, {
     method:  'POST',
@@ -1443,9 +1443,7 @@ function doSubmit(payload) {
 function showSuccess(name, svcCount) {
   document.getElementById('intake-form').style.display = 'none';
   document.getElementById('success-msg').textContent =
-    name + ' has been saved to the Agency Brain spreadsheet with ' +
-    svcCount + ' service' + (svcCount === 1 ? '' : 's') +
-    '. Go to the spreadsheet → KPW Brain → Research Selected Service to start generating content.';
+    'We\'ve got everything we need to get started on ' + name + '\'s content. You\'ll hear from us soon — watch your email.';
   document.getElementById('success-screen').style.display = 'block';
 }
 
