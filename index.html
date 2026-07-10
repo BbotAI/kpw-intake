@@ -102,9 +102,33 @@
     }
     .audio-btn.active .btn-icon { animation: pulse-icon 1.5s ease-in-out infinite; }
 
+    .audio-track-select {
+      background: rgba(230, 126, 34, 0.10);
+      border: 1.5px solid rgba(230, 126, 34, 0.4);
+      border-radius: 22px;
+      color: #E67E22;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 8px 10px;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .audio-track-select:hover,
+    .audio-track-select:focus {
+      background: rgba(230, 126, 34, 0.22);
+      border-color: var(--orange);
+    }
+    .audio-track-select option {
+      background: #0a1120;
+      color: #fbbf24;
+    }
+
     @media (max-width: 540px) {
       .audio-btn .btn-label { display: none; }
       .audio-btn { padding: 8px 11px; }
+      .audio-track-select { padding: 8px 8px; font-size: 11px; }
     }
 
     /* ── Layout ────────────────────────────────────────────────────────────── */
@@ -464,6 +488,11 @@
       <i class="btn-icon">&#9654;</i>
       <span class="btn-label">Play Music</span>
     </button>
+    <select id="msgTrackSelect" class="audio-track-select" aria-label="Choose audio track" onchange="onMsgTrackChange()">
+      <option value="audio_message.ogg">Welcome Message</option>
+      <option value="audio_country.mp3">Country</option>
+      <option value="audio_hiphop.mp3">Hip Hop</option>
+    </select>
     <button class="audio-btn" id="msgBtn" onclick="toggleMsg(this)">
       <i class="btn-icon">&#127897;</i>
       <span class="btn-label">KPW Message</span>
@@ -1276,9 +1305,27 @@ function setSongState(btn, playing) {
   btn.querySelector('.btn-label').textContent = playing ? 'Pause Music' : 'Play Music';
 }
 
+function getMsgTrackFile() {
+  var select = document.getElementById('msgTrackSelect');
+  return select ? select.value : 'audio_message.ogg';
+}
+
+function onMsgTrackChange() {
+  // Switching tracks mid-play would need the old Audio object torn down
+  // anyway, so just stop playback and let the user press play again.
+  if (msgAudio) {
+    msgAudio.pause();
+    msgAudio.currentTime = 0;
+  }
+  msgAudio = null;
+  msgPlaying = false;
+  var btn = document.getElementById('msgBtn');
+  if (btn) setMsgState(btn, false);
+}
+
 function toggleMsg(btn) {
   if (!msgAudio) {
-    msgAudio = new Audio('audio_message.ogg');
+    msgAudio = new Audio(getMsgTrackFile());
     msgAudio.addEventListener('ended', function() {
       msgPlaying = false;
       setMsgState(btn, false);
@@ -1305,8 +1352,10 @@ function toggleMsg(btn) {
 
 function setMsgState(btn, playing) {
   btn.classList.toggle('active', playing);
-  btn.querySelector('.btn-icon').innerHTML    = playing ? '&#9646;&#9646;' : '&#127897;';
-  btn.querySelector('.btn-label').textContent = playing ? 'Stop Message'  : 'KPW Message';
+  btn.querySelector('.btn-icon').innerHTML = playing ? '&#9646;&#9646;' : '&#127897;';
+  var select = document.getElementById('msgTrackSelect');
+  var trackLabel = select ? select.options[select.selectedIndex].text : 'KPW Message';
+  btn.querySelector('.btn-label').textContent = playing ? 'Stop' : trackLabel;
 }
 
 
