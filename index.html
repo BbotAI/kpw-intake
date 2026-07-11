@@ -529,7 +529,7 @@
   <div class="welcome-showcase__icon">&#127897;</div>
   <div class="welcome-showcase__text">
     <strong>New here?</strong>
-    <span>Press play for a quick walkthrough of this form.</span>
+    <span>&#127925; Hit play before you start &mdash; quick walkthrough of this form.</span>
   </div>
   <button class="welcome-showcase__btn" id="welcomeBtn" onclick="togglePlayer('welcome')">
     <i class="btn-icon">&#9654;</i> <span class="btn-label">Play Welcome Message</span>
@@ -1325,9 +1325,9 @@ requestAnimationFrame(drawFrame);
    browser allows it.
 ═══════════════════════════════════════════════════════════════════════ */
 var audioPlayers = {
-  country: { file: 'audio_country.mp3', loop: true,  audio: null, btnId: 'countryBtn', defaultLabel: 'Country' },
-  hiphop:  { file: 'audio_hiphop.mp3',   loop: true,  audio: null, btnId: 'hiphopBtn',  defaultLabel: 'Hip-Hop' },
-  welcome: { file: 'audio_message.ogg',  loop: false, audio: null, btnId: 'welcomeBtn', defaultLabel: 'Play Welcome Message' }
+  welcome: { file: 'audio_intake_welcome.mp3', loop: false, audio: null, btnId: 'welcomeBtn', defaultLabel: 'Play Welcome Message' },
+  country: { file: 'audio_track_country.mp3',  loop: true,  audio: null, btnId: 'countryBtn', defaultLabel: 'Country' },
+  hiphop:  { file: 'audio_track_hiphop.mp3',   loop: true,  audio: null, btnId: 'hiphopBtn',  defaultLabel: 'Hip-Hop' }
 };
 var currentlyPlaying = null;
 
