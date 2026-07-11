@@ -1094,6 +1094,19 @@ var STAR_COLORS = [
   [225, 210, 255],   /* faint lavender    */
 ];
 
+/* Shooting-star tail colors — wider, more saturated than the milky way
+   wash above since a falling star is a foreground moment, not a background
+   texture. The leading tip always stays white-hot regardless of tail color. */
+var SHOOTER_COLORS = [
+  [210, 228, 255],   /* ice blue          */
+  [200, 215, 255],   /* cool blue-white   */
+  [225, 210, 255],   /* lavender          */
+  [255, 248, 210],   /* warm yellow-white */
+  [255, 205, 235],   /* soft rose         */
+  [175, 255, 235],   /* aqua / teal-cyan  */
+  [255, 195, 150],   /* warm coral        */
+];
+
 function rnd(min, max) { return min + Math.random() * (max - min); }
 function pick(arr)      { return arr[Math.floor(Math.random() * arr.length)]; }
 
@@ -1182,6 +1195,7 @@ function newShooter(delay) {
   var ang = rnd(18, 52) * Math.PI / 180;
   var spd = rnd(11, 20);
   var fromLeft = Math.random() < 0.35;
+  var c = pick(SHOOTER_COLORS);
   return {
     x:       fromLeft ? rnd(-40, W * 0.1)  : rnd(W * 0.05, W * 0.82),
     y:       fromLeft ? rnd(H * 0.05, H * 0.6) : rnd(-40, H * 0.38),
@@ -1193,6 +1207,7 @@ function newShooter(delay) {
     maxAge:  rnd(42, 80),
     delay:   delay,
     waiting: true,
+    cr: c[0], cg: c[1], cb: c[2],
     t0:      performance.now()
   };
 }
@@ -1264,9 +1279,9 @@ function drawFrame(now) {
       var ty  = sh.y - (sh.vy / mag) * sh.tailLen;
 
       var g = ctx.createLinearGradient(tx, ty, sh.x, sh.y);
-      g.addColorStop(0,   'rgba(255,255,255,0)');
-      g.addColorStop(0.5, 'rgba(210,228,255,' + (al * 0.38).toFixed(3) + ')');
-      g.addColorStop(0.85,'rgba(235,245,255,' + (al * 0.75).toFixed(3) + ')');
+      g.addColorStop(0,   'rgba(' + sh.cr + ',' + sh.cg + ',' + sh.cb + ',0)');
+      g.addColorStop(0.5, 'rgba(' + sh.cr + ',' + sh.cg + ',' + sh.cb + ',' + (al * 0.45).toFixed(3) + ')');
+      g.addColorStop(0.85,'rgba(' + Math.min(255,sh.cr+15) + ',' + Math.min(255,sh.cg+15) + ',' + Math.min(255,sh.cb+15) + ',' + (al * 0.8).toFixed(3) + ')');
       g.addColorStop(1,   'rgba(255,255,255,' + al.toFixed(3) + ')');
 
       ctx.beginPath();
@@ -1279,8 +1294,8 @@ function drawFrame(now) {
 
       var hg = ctx.createRadialGradient(sh.x, sh.y, 0, sh.x, sh.y, 5);
       hg.addColorStop(0,   'rgba(255,255,255,' + al.toFixed(3) + ')');
-      hg.addColorStop(0.4, 'rgba(200,220,255,' + (al * 0.6).toFixed(3) + ')');
-      hg.addColorStop(1,   'rgba(150,180,255,0)');
+      hg.addColorStop(0.4, 'rgba(' + sh.cr + ',' + sh.cg + ',' + sh.cb + ',' + (al * 0.65).toFixed(3) + ')');
+      hg.addColorStop(1,   'rgba(' + sh.cr + ',' + sh.cg + ',' + sh.cb + ',0)');
       ctx.beginPath();
       ctx.arc(sh.x, sh.y, 5, 0, 6.2832);
       ctx.fillStyle = hg;
