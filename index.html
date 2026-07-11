@@ -102,33 +102,58 @@
     }
     .audio-btn.active .btn-icon { animation: pulse-icon 1.5s ease-in-out infinite; }
 
-    .audio-track-select {
-      background: rgba(230, 126, 34, 0.10);
-      border: 1.5px solid rgba(230, 126, 34, 0.4);
-      border-radius: 22px;
-      color: #E67E22;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: inherit;
-      padding: 8px 10px;
-      cursor: pointer;
-      outline: none;
-      transition: background 0.18s, border-color 0.18s;
-    }
-    .audio-track-select:hover,
-    .audio-track-select:focus {
-      background: rgba(230, 126, 34, 0.22);
-      border-color: var(--orange);
-    }
-    .audio-track-select option {
-      background: #0a1120;
-      color: #fbbf24;
+    @media (max-width: 540px) {
+      /* Keep labels visible — with only Country/Hip-Hop left, hiding them
+         makes both buttons collapse to an identical bare play icon. */
+      .audio-btn { padding: 7px 10px; font-size: 11px; }
     }
 
+    /* ── Welcome message showcase ─────────────────────────────────────────── */
+    .welcome-showcase {
+      position: relative;
+      z-index: 1;
+      width: calc(100% - 40px);
+      max-width: 760px;
+      margin: 16px auto 0;
+      padding: 14px 20px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(230, 126, 34, 0.08);
+      border: 1.5px solid rgba(230, 126, 34, 0.35);
+      border-radius: 12px;
+    }
+    .welcome-showcase__icon { font-size: 22px; flex-shrink: 0; }
+    .welcome-showcase__text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+    .welcome-showcase__text strong { color: #fff; font-size: 14px; }
+    .welcome-showcase__btn {
+      flex-shrink: 0;
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 22px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .welcome-showcase__btn:hover { background: #d3691a; }
+    .welcome-showcase__btn.active .btn-icon { animation: pulse-icon 1.5s ease-in-out infinite; }
+
     @media (max-width: 540px) {
-      .audio-btn .btn-label { display: none; }
-      .audio-btn { padding: 8px 11px; }
-      .audio-track-select { padding: 8px 8px; font-size: 11px; }
+      .welcome-showcase { flex-wrap: wrap; padding: 14px 16px; }
+      .welcome-showcase__btn { width: 100%; }
     }
 
     /* ── Layout ────────────────────────────────────────────────────────────── */
@@ -484,21 +509,27 @@
     <p>Kansas Prairie Webworks &mdash; your info goes straight to our team</p>
   </div>
   <div class="audio-btns">
-    <button class="audio-btn" id="songBtn" onclick="toggleSong(this)">
+    <button class="audio-btn" id="countryBtn" onclick="togglePlayer('country')">
       <i class="btn-icon">&#9654;</i>
-      <span class="btn-label">Play Music</span>
+      <span class="btn-label">Country</span>
     </button>
-    <select id="msgTrackSelect" class="audio-track-select" aria-label="Choose audio track" onchange="onMsgTrackChange()">
-      <option value="audio_message.ogg">Welcome Message</option>
-      <option value="audio_country.mp3">Country</option>
-      <option value="audio_hiphop.mp3">Hip Hop</option>
-    </select>
-    <button class="audio-btn" id="msgBtn" onclick="toggleMsg(this)">
-      <i class="btn-icon">&#127897;</i>
-      <span class="btn-label">KPW Message</span>
+    <button class="audio-btn" id="hiphopBtn" onclick="togglePlayer('hiphop')">
+      <i class="btn-icon">&#9654;</i>
+      <span class="btn-label">Hip-Hop</span>
     </button>
   </div>
 </header>
+
+<div class="welcome-showcase">
+  <div class="welcome-showcase__icon">&#127897;</div>
+  <div class="welcome-showcase__text">
+    <strong>New here?</strong>
+    <span>Press play for a quick walkthrough of this form.</span>
+  </div>
+  <button class="welcome-showcase__btn" id="welcomeBtn" onclick="togglePlayer('welcome')">
+    <i class="btn-icon">&#9654;</i> <span class="btn-label">Play Welcome Message</span>
+  </button>
+</div>
 
 <div class="container">
 
@@ -1269,93 +1300,71 @@ requestAnimationFrame(drawFrame);
 
 
 /* ═══════════════════════════════════════════════════════════════════════
-   AUDIO — new Audio() on first click guarantees browser allows it
+   AUDIO — three independent players (Country, Hip-Hop, Welcome Message),
+   only one plays at a time. new Audio() on first click guarantees the
+   browser allows it.
 ═══════════════════════════════════════════════════════════════════════ */
-var songAudio   = null;
-var msgAudio    = null;
-var songPlaying = false;
-var msgPlaying  = false;
+var audioPlayers = {
+  country: { file: 'audio_country.mp3', loop: true,  audio: null, btnId: 'countryBtn', defaultLabel: 'Country' },
+  hiphop:  { file: 'audio_hiphop.mp3',   loop: true,  audio: null, btnId: 'hiphopBtn',  defaultLabel: 'Hip-Hop' },
+  welcome: { file: 'audio_message.ogg',  loop: false, audio: null, btnId: 'welcomeBtn', defaultLabel: 'Play Welcome Message' }
+};
+var currentlyPlaying = null;
 
-function toggleSong(btn) {
-  if (!songAudio) {
-    songAudio = new Audio('Simpler_Than_You_Think.mp3');
-    songAudio.loop = true;
+function stopPlayer(key) {
+  var p = audioPlayers[key];
+  if (p.audio) {
+    p.audio.pause();
+    p.audio.currentTime = 0;
   }
-  if (songPlaying) {
-    songAudio.pause();
-    songPlaying = false;
-    setSongState(btn, false);
-  } else {
-    if (msgPlaying) { var mb = document.getElementById('msgBtn'); toggleMsg(mb); }
-    songAudio.play()
-      .then(function() {
-        songPlaying = true;
-        setSongState(btn, true);
-      })
-      .catch(function(e) {
-        console.warn('Song play failed:', e);
-        btn.querySelector('.btn-label').textContent = 'Unavailable';
-      });
+  setPlayerState(key, false);
+}
+
+function togglePlayer(key) {
+  var p = audioPlayers[key];
+  if (!p) return;
+
+  if (currentlyPlaying === key) {
+    stopPlayer(key);
+    currentlyPlaying = null;
+    return;
   }
-}
 
-function setSongState(btn, playing) {
-  btn.classList.toggle('active', playing);
-  btn.querySelector('.btn-icon').innerHTML  = playing ? '&#9646;&#9646;' : '&#9654;';
-  btn.querySelector('.btn-label').textContent = playing ? 'Pause Music' : 'Play Music';
-}
+  if (currentlyPlaying) stopPlayer(currentlyPlaying);
 
-function getMsgTrackFile() {
-  var select = document.getElementById('msgTrackSelect');
-  return select ? select.value : 'audio_message.ogg';
-}
-
-function onMsgTrackChange() {
-  // Switching tracks mid-play would need the old Audio object torn down
-  // anyway, so just stop playback and let the user press play again.
-  if (msgAudio) {
-    msgAudio.pause();
-    msgAudio.currentTime = 0;
-  }
-  msgAudio = null;
-  msgPlaying = false;
-  var btn = document.getElementById('msgBtn');
-  if (btn) setMsgState(btn, false);
-}
-
-function toggleMsg(btn) {
-  if (!msgAudio) {
-    msgAudio = new Audio(getMsgTrackFile());
-    msgAudio.addEventListener('ended', function() {
-      msgPlaying = false;
-      setMsgState(btn, false);
+  if (!p.audio) {
+    p.audio = new Audio(p.file);
+    p.audio.loop = p.loop;
+    p.audio.addEventListener('ended', function() {
+      if (currentlyPlaying === key) {
+        currentlyPlaying = null;
+        setPlayerState(key, false);
+      }
     });
   }
-  if (msgPlaying) {
-    msgAudio.pause();
-    msgAudio.currentTime = 0;
-    msgPlaying = false;
-    setMsgState(btn, false);
-  } else {
-    if (songPlaying) { var sb = document.getElementById('songBtn'); toggleSong(sb); }
-    msgAudio.play()
-      .then(function() {
-        msgPlaying = true;
-        setMsgState(btn, true);
-      })
-      .catch(function(e) {
-        console.warn('Message play failed:', e);
-        btn.querySelector('.btn-label').textContent = 'Unavailable';
-      });
-  }
+
+  p.audio.play()
+    .then(function() {
+      currentlyPlaying = key;
+      setPlayerState(key, true);
+    })
+    .catch(function(e) {
+      console.warn(key + ' play failed:', e);
+      var btn = document.getElementById(p.btnId);
+      var label = btn.querySelector('.btn-label');
+      if (label) label.textContent = 'Unavailable';
+    });
 }
 
-function setMsgState(btn, playing) {
+function setPlayerState(key, playing) {
+  var p = audioPlayers[key];
+  var btn = document.getElementById(p.btnId);
+  if (!btn) return;
   btn.classList.toggle('active', playing);
-  btn.querySelector('.btn-icon').innerHTML = playing ? '&#9646;&#9646;' : '&#127897;';
-  var select = document.getElementById('msgTrackSelect');
-  var trackLabel = select ? select.options[select.selectedIndex].text : 'KPW Message';
-  btn.querySelector('.btn-label').textContent = playing ? 'Stop' : trackLabel;
+  var icon = btn.querySelector('.btn-icon');
+  if (icon) icon.innerHTML = playing ? '&#9646;&#9646;' : '&#9654;';
+  var label = btn.querySelector('.btn-label');
+  if (label) label.textContent = playing ? 'Stop' : p.defaultLabel;
 }
 
 
