@@ -109,6 +109,10 @@
     }
 
     /* ── Welcome message showcase ─────────────────────────────────────────── */
+    @keyframes welcome-glow-pulse {
+      0%, 100% { box-shadow: 0 0 12px rgba(230,126,34,0.25); border-color: rgba(230,126,34,0.35); }
+      50%      { box-shadow: 0 0 26px rgba(230,126,34,0.55), 0 0 10px rgba(230,126,34,0.25); border-color: rgba(230,126,34,0.75); }
+    }
     .welcome-showcase {
       position: relative;
       z-index: 1;
@@ -123,6 +127,7 @@
       background: rgba(230, 126, 34, 0.08);
       border: 1.5px solid rgba(230, 126, 34, 0.35);
       border-radius: 12px;
+      animation: welcome-glow-pulse 2.8s ease-in-out infinite;
     }
     .welcome-showcase__icon { font-size: 22px; flex-shrink: 0; }
     .welcome-showcase__text {
